@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.2'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+
+    maven {
+        url 'http://dl.bintray.com/dev-fingerlinks/maven'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.facebook.react:react-native:+'
+    compile 'com.noke.nokemobilelibrary:nokemobilelibrary:0.4.1'
+}
