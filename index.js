@@ -8,7 +8,6 @@ const {RNNoke} = NativeModules
 const NokeEmitter = new NativeEventEmitter(RNNoke)
 
 export default {
-	data: {},
 	initiateNokeService() {
 		return RNNoke.initiateNokeService()
 	},
@@ -17,6 +16,7 @@ export default {
 		return this
 	},
 	offlineUnlock: RNNoke.offlineUnlock,
+	sendCommands: RNNoke.sendCommands,
 	addNokeDevice: RNNoke.addNokeDevice,
 	removeAllNokes: RNNoke.removeAllNokes,
 	removeNokeDevice: RNNoke.removeNokeDevice,

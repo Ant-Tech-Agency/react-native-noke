@@ -4,6 +4,7 @@
 ## Getting started
 
 `$ npm install react-native-noke --save`
+`$ yarn add react-native-noke`
 
 ### Manual installation
 
