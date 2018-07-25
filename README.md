@@ -50,8 +50,8 @@ export default class App extends Component {
 			console.log('noke', noke)
 
 			RNNoke
-			.on('onServiceConnected', data => console.log('onServiceConnected', data))
-			.on('onNokeDiscovered', data => console.log('onNokeDiscovered', data))
+			.on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android
+			.on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) // only Android
 			.on('onNokeConnecting', data => console.log('onNokeConnecting', data))
 			.on('onNokeConnected', data => console.log('onNokeConnected', data))
 			.on('onNokeSyncing', data => console.log('onNokeSyncing', data))
