@@ -68,9 +68,8 @@ export default class App extends Component {
 		return PermissionsAndroid.request(
 			PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
 			{
-				'title': 'Cool Photo App Camera Permission',
-				'message': 'Cool Photo App needs access to your camera ' +
-				'so you can take awesome pictures.'
+				'title': 'Cool Location Permission',
+				'message': 'Cool Location App needs access to your location '
 			}
 		)
 		.then(console.log)
