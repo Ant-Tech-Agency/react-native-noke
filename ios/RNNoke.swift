@@ -68,7 +68,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     
     // Export constants to use in your native module
     override func constantsToExport() -> [AnyHashable : Any]! {
-        return ["AUTHOR": "linh"]
+        return ["AUTHOR": "linh_the_human"]
     }
     
     override static func requiresMainQueueSetup() -> Bool {
@@ -99,13 +99,29 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             name: data["name"]! as String,
             mac: data["mac"]! as String
         )
-        //        noke?.setOfflineValues(
-        //            key: data["key"]! as String,
-        //            command: data["cmd"]! as String
-        //        )
+        
+        noke?.setOfflineValues(
+            key: data["key"]! as String,
+            command: data["cmd"]! as String
+        )
         NokeDeviceManager.shared().addNoke(noke!)
         
         resolve(["status": true])
+    }
+    
+    @objc func sendCommands(
+        _ command: String,
+        resolver resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+    ) {
+        if(currentNoke == nil) {
+            let error = NSError(domain: "", code: 200, userInfo: nil)
+            reject("message", "mNokeService is null", error)
+            return
+        }
+        currentNoke?.sendCommands(command)
+        
+        resolve(["name": currentNoke?.name, "mac": currentNoke?.mac])
     }
     
     @objc func offlineUnlock(
@@ -119,7 +135,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         if(currentNoke == nil) {
             event["success"] = false
         } else {
-            //            currentNoke?.offlineUnlock()
+            currentNoke?.offlineUnlock()
             event["success"] = true
         }
         
@@ -131,7 +147,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         rejecter reject: RCTPromiseRejectBlock
         ) {
         
-        //        NokeDeviceManager.shared().removeAllNoke()
+        NokeDeviceManager.shared().removeAllNoke()
         
         resolve([
             "status": true
@@ -144,7 +160,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         rejecter reject: RCTPromiseRejectBlock
         ) {
         
-        //        NokeDeviceManager.shared().removeNoke(mac: mac)
+        NokeDeviceManager.shared().removeNoke(mac: mac)
         
         resolve([
             "status": true

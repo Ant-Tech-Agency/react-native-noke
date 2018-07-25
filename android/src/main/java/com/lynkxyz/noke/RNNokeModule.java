@@ -105,6 +105,20 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void sendCommands(String command, Promise promise) {
+    try {
+      if(currentNoke == null) {
+        promise.reject("message", "currentNoke is null");
+        return;
+      }
+      currentNoke.sendCommands(command);
+      promise.resolve(createCommonEvents(currentNoke));
+    } catch (IllegalViewOperationException e) {
+      promise.reject("message", e.getMessage());
+    }
+  }
+
+  @ReactMethod
   public void removeAllNokes(Promise promise) {
     try {
       mNokeService.removeAllNoke();

@@ -58,4 +58,10 @@ RCT_EXTERN_METHOD(
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
+
+RCT_EXTERN_METHOD(
+                  sendCommands:(NSString) value
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 @end
