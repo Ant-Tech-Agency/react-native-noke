@@ -41,7 +41,7 @@
 ```javascript
 import RNNoke from 'react-native-noke';
 
-export default class App extends Component<Props> {
+export default class App extends Component {
 	componentDidMount() {
 		this.requestLocationPermission() // only Android
 
