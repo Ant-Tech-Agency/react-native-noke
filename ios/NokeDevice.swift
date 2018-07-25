@@ -329,7 +329,7 @@ public class NokeDevice: NSObject, NSCoding, CBPeripheralDelegate{
                 switch resultByte{
                 case Constants.SUCCESS_ResultType:
                     self.moveToNext()
-                    if(self.commandArray.count == 0){
+                    if(self.commandArray == nil || self.commandArray.count == 0){
                         self.lockState = NokeDeviceLockState.nokeDeviceLockStateUnlocked
                         self.connectionState = NokeDeviceConnectionState.nokeDeviceConnectionStateUnlocked
                         NokeDeviceManager.shared().delegate?.nokeDeviceDidUpdateState(to: self.connectionState!, noke: self)
