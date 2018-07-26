@@ -4,6 +4,7 @@
 ## Getting started
 
 `$ npm install react-native-noke --save`
+or
 `$ yarn add react-native-noke`
 
 ### Manual installation
@@ -50,8 +51,8 @@ export default class App extends Component {
 			console.log('noke', noke)
 
 			RNNoke
-      .on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
-      .on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
+			.on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
+			.on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
 			.on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) 
 			.on('onNokeConnecting', data => console.log('onNokeConnecting', data))
 			.on('onNokeConnected', data => console.log('onNokeConnected', data))
@@ -85,17 +86,17 @@ export default class App extends Component {
 
 	onAddNoke = () => {
 		RNNoke.addNokeDevice({
-			name: 'LinhNoke',
-			mac: "CB:BC:87:3B:CB:D7",
-			key: "9966eb079eabb129e7adbded88eab6c3",
-			cmd: "0152843f00a2dec3515b000000000000000000ef"
+			name: 'NokeName',
+			mac: "NOKE_MAC_ADDRESS",
+			key: "OFFLINE_UNLOCK_KEY",
+			cmd: "OFFLINE_UNLOCK_COMMAND"
 		})
 		.then(console.log)
 		.catch(console.error)
 	}
 
 	onSendCommands = () => {
-		RNNoke.sendCommands("0152843f00a2dec3515b000000000000000000ef")
+		RNNoke.sendCommands("COMMAND_STRING")
 		.then(console.log)
 		.catch(console.error)
 	}
