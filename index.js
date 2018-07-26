@@ -20,6 +20,7 @@ export default {
 	addNokeDevice: RNNoke.addNokeDevice,
 	removeAllNokes: RNNoke.removeAllNokes,
 	removeNokeDevice: RNNoke.removeNokeDevice,
+	startScan: RNNoke.startScan,
 
 	AUTHOR: RNNoke.AUTHOR
 }
