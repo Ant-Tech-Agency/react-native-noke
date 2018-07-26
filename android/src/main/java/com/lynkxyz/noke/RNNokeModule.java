@@ -65,11 +65,17 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       WritableMap event = Arguments.createMap();
       event.putBoolean("status", true);
 
-      if(mNokeService == null) {
-        event.putString("data", "mNokeService null");
-      }
-
       promise.resolve(event);
+    } catch (IllegalViewOperationException e) {
+      promise.reject("message", e.getMessage());
+    }
+  }
+
+  @ReactMethod
+  public void startScan(Promise promise) {
+    try {
+      mNokeService.startScanningForNokeDevices();
+      promise.resolve(createCommonEvents(currentNoke));
     } catch (IllegalViewOperationException e) {
       promise.reject("message", e.getMessage());
     }
@@ -84,6 +90,10 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
        * key: "9966eb079eabb129e7adbded88eab6c3
        * cmd: "0152843f00a2dec3515b000000000000000000ef"
        */
+      if(data == null) {
+        promise.reject("message", "data is null");
+        return;
+      }
 
       NokeDevice noke = new NokeDevice(
               data.getString("name"),
@@ -93,12 +103,15 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       noke.setOfflineUnlockCmd(data.getString("cmd"));
 
       if (mNokeService == null) {
-        promise.reject("message", "mNokeService null");
+        promise.reject("message", "mNokeService is null");
         return;
       }
       mNokeService.addNokeDevice(noke);
 
-      promise.resolve(createCommonEvents(noke));
+      final WritableMap event = Arguments.createMap();
+      event.putBoolean("status", true);
+
+      promise.resolve(event);
     } catch (IllegalViewOperationException e) {
       promise.reject("message", e.getMessage());
     }
@@ -206,7 +219,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
             case where the mobile app should be making requests to the Noke Core API directly.
              */
 
-//            mNokeService.setUploadUrl("UPLOAD URL HERE");
+      //mNokeService.setUploadUrl("UPLOAD URL HERE");
 
       //Start bluetooth scanning
       mNokeService.startScanningForNokeDevices();
@@ -277,7 +290,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       emitDeviceEvent("onNokeDisconnected", event);
       currentNoke = null;
       mNokeService.uploadData();
-      mNokeService.startScanningForNokeDevices();
+//      mNokeService.startScanningForNokeDevices();
     }
 
     @Override
