@@ -6,6 +6,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     
     func nokeDeviceDidUpdateState(to state: NokeDeviceConnectionState, noke: NokeDevice) {
         switch state {
+            
         case .nokeDeviceConnectionStateDiscovered:
             NokeDeviceManager.shared().stopScan()
             NokeDeviceManager.shared().connectToNokeDevice(noke)
@@ -28,7 +29,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             break
         case .nokeDeviceConnectionStateDisconnected:
             NokeDeviceManager.shared().cacheUploadQueue()
-            NokeDeviceManager.shared().startScanForNokeDevices()
+//            NokeDeviceManager.shared().startScanForNokeDevices()
             currentNoke = nil
             
             sendEvent(withName: "onNokeDisconnected", body: ["name": noke.name, "mac": noke.mac])
@@ -49,9 +50,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         var message: String = ""
         switch (state) {
         case NokeManagerBluetoothState.poweredOn:
-            //      debugPrint("NOKE MANAGER ON")
-            NokeDeviceManager.shared().startScanForNokeDevices()
-            //      statusLabel.text = "Scanning for Noke Devices"
+//            NokeDeviceManager.shared().startScanForNokeDevices()
             message = "on"
             break
         case NokeManagerBluetoothState.poweredOff:
@@ -73,6 +72,15 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     
     override static func requiresMainQueueSetup() -> Bool {
         return true
+    }
+    
+    @objc func startScan(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().startScanForNokeDevices()
+        
+        resolve(["status": true])
     }
     
     @objc func initiateNokeService(
