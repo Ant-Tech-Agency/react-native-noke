@@ -134,4 +134,9 @@ export default class App extends Component {
 	}
 }
 ```
-  
+
+## License
+
+react-native-noke is available under the Apache 2.0 license. See the LICENSE file for more info.
+
+Copyright © 2018 Ant-Tech Ltd. All rights reserved.

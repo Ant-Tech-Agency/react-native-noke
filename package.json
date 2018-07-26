@@ -1,8 +1,7 @@
-
 {
   "name": "react-native-noke",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Noke SDK for React-Native",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +9,9 @@
   "keywords": [
     "react-native"
   ],
-  "author": "",
+  "author": "Ant-Tech Ltd.",
   "license": "",
+  "repository": "https://github.com/Ant-Tech-Agency/react-native-noke",
   "peerDependencies": {
     "react-native": "^0.41.2"
   }
