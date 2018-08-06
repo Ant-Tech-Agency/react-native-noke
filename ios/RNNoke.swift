@@ -178,6 +178,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     override func supportedEvents() -> [String]! {
         return [
             "onServiceConnected",
+            "onServiceDisconnected",
             "onNokeDiscovered",
             "onNokeConnecting",
             "onNokeConnected",
