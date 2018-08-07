@@ -1,16 +1,13 @@
 import {
 	NativeModules,
 	NativeEventEmitter,
-	Platform
 } from 'react-native'
 
 const {RNNoke} = NativeModules
 const NokeEmitter = new NativeEventEmitter(RNNoke)
 
 export default {
-	initiateNokeService() {
-		return RNNoke.initiateNokeService()
-	},
+	initiateNokeService: RNNoke.initiateNokeService,
 	on(eventName, callback) {
 		NokeEmitter.addListener(eventName, callback)
 		return this
@@ -21,6 +18,8 @@ export default {
 	removeAllNokes: RNNoke.removeAllNokes,
 	removeNokeDevice: RNNoke.removeNokeDevice,
 	startScan: RNNoke.startScan,
+  stopScan: RNNoke.stopScan,
+  disconnect: RNNoke.disconnect,
 
 	AUTHOR: RNNoke.AUTHOR
 }

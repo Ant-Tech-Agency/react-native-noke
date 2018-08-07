@@ -75,7 +75,23 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   public void startScan(Promise promise) {
     try {
       mNokeService.startScanningForNokeDevices();
-      promise.resolve(createCommonEvents(currentNoke));
+      final WritableMap event = Arguments.createMap();
+      event.putBoolean("status", true);
+
+      promise.resolve(event);
+    } catch (IllegalViewOperationException e) {
+      promise.reject("message", e.getMessage());
+    }
+  }
+
+  @ReactMethod
+  public void stopScan(Promise promise) {
+    try {
+      mNokeService.stopScanning();
+      final WritableMap event = Arguments.createMap();
+      event.putBoolean("status", true);
+
+      promise.resolve(event);
     } catch (IllegalViewOperationException e) {
       promise.reject("message", e.getMessage());
     }
@@ -129,6 +145,24 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     } catch (IllegalViewOperationException e) {
       promise.reject("message", e.getMessage());
     }
+  }
+
+  @ReactMethod
+  public void disconnect(Promise promise) {
+    if(mNokeService == null) {
+      promise.reject("message", "mNokeService is null");
+      return;
+    }
+    if(currentNoke == null) {
+      promise.reject("message", "currentNoke is null");
+      return;
+    }
+
+    mNokeService.disconnectNoke(currentNoke);
+
+    final WritableMap event = Arguments.createMap();
+    event.putBoolean("status", true);
+    promise.resolve(event);
   }
 
   @ReactMethod
