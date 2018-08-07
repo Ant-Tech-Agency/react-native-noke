@@ -83,6 +83,15 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         resolve(["status": true])
     }
     
+    @objc func stopScan(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().stopScan()
+        
+        resolve(["status": true])
+    }
+    
     @objc func initiateNokeService(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
@@ -124,12 +133,26 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     ) {
         if(currentNoke == nil) {
             let error = NSError(domain: "", code: 200, userInfo: nil)
-            reject("message", "mNokeService is null", error)
+            reject("message", "currentNoke is null", error)
             return
         }
         currentNoke?.sendCommands(command)
         
         resolve(["name": currentNoke?.name, "mac": currentNoke?.mac])
+    }
+    
+    @objc func disconnect(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        if(currentNoke == nil) {
+            let error = NSError(domain: "", code: 200, userInfo: nil)
+            reject("message", "currentNoke is null", error)
+            return
+        }
+        NokeDeviceManager.shared().disconnectNokeDevice(currentNoke!)
+        
+        resolve(["status": true])
     }
     
     @objc func offlineUnlock(
@@ -188,6 +211,5 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             "onBluetoothStatusChanged",
             "onError"
         ]
-    }
-    
+    } 
 }
