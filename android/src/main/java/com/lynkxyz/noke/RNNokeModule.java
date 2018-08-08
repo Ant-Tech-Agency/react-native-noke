@@ -101,10 +101,10 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   public void addNokeDevice(ReadableMap data, Promise promise) {
     try {
       /**
-       * name: "New Lock"
-       * mac: "CB:BC:87:3B:CB:D7"
-       * key: "9966eb079eabb129e7adbded88eab6c3
-       * cmd: "0152843f00a2dec3515b000000000000000000ef"
+       * name: "Lock Name"
+       * mac: "XX:XX:XX:XX:XX:XX"
+       * key: "OFFLINE_KEY"
+       * cmd: "OFFLINE_COMMAND"
        */
       if(data == null) {
         promise.reject("message", "data is null");
