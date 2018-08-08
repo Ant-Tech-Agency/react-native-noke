@@ -256,7 +256,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       //mNokeService.setUploadUrl("UPLOAD URL HERE");
 
       //Start bluetooth scanning
-      mNokeService.startScanningForNokeDevices();
+      // mNokeService.startScanningForNokeDevices();
       String message = "Scanning for Noke Devices";
 
 
