@@ -85,4 +85,9 @@ RCT_EXTERN_METHOD(
                   getDeviceInfo:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
+
+RCT_EXTERN_METHOD(
+                  setOfflineData:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 @end

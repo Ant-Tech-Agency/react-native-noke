@@ -11,41 +11,40 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             NokeDeviceManager.shared().stopScan()
             NokeDeviceManager.shared().connectToNokeDevice(noke)
             
-            sendEvent(withName: "onNokeDiscovered", body: ["name": noke.name, "mac": noke.mac])
+            sendEvent(withName: "onNokeDiscovered", body: createCommonEvents(noke: noke))
             break
         case .nokeDeviceConnectionStateConnected:
             print(noke.session!)
             currentNoke = noke
-            
-            sendEvent(withName: "onNokeConnected", body: ["name": noke.name, "mac": noke.mac])
+
+            sendEvent(withName: "onNokeConnected", body: createCommonEvents(noke: noke))
             break
         case .nokeDeviceConnectionStateSyncing:
-            
-            sendEvent(withName: "onNokeConnecting", body: ["name": noke.name, "mac": noke.mac])
+
+            sendEvent(withName: "onNokeConnecting", body: createCommonEvents(noke: noke))
             break
         case .nokeDeviceConnectionStateUnlocked:
-            
-            sendEvent(withName: "onNokeUnlocked", body: ["name": noke.name, "mac": noke.mac])
+
+            sendEvent(withName: "onNokeUnlocked", body: createCommonEvents(noke: noke))
             break
         case .nokeDeviceConnectionStateDisconnected:
             NokeDeviceManager.shared().cacheUploadQueue()
-//            NokeDeviceManager.shared().startScanForNokeDevices()
             currentNoke = nil
-            
-            sendEvent(withName: "onNokeDisconnected", body: ["name": noke.name, "mac": noke.mac])
+
+            sendEvent(withName: "onNokeDisconnected", body: createCommonEvents(noke: noke))
             break
         default:
-            
+
             sendEvent(withName: "onError", body: ["message": "unrecognized state"])
             break
         }
     }
-    
+
     func nokeErrorDidOccur(error: NokeDeviceManagerError, message: String, noke: NokeDevice?) {
         debugPrint("NOKE MANAGER ON")
         sendEvent(withName: "onError", body: ["code": 0,"mesage": message])
     }
-    
+
     func bluetoothManagerDidUpdateState(state: NokeManagerBluetoothState) {
         var message: String = ""
         switch (state) {
@@ -64,43 +63,52 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         }
         sendEvent(withName: "onBluetoothStatusChanged", body: ["code": 0, "message": message])
     }
-    
+
     // Export constants to use in your native module
     override func constantsToExport() -> [AnyHashable : Any]! {
         return ["AUTHOR": "linh_the_human"]
     }
-    
+
     override static func requiresMainQueueSetup() -> Bool {
         return true
     }
-    
-    @objc func startScan(
-        _ resolve: RCTPromiseResolveBlock,
-        rejecter reject: RCTPromiseRejectBlock
-        ) {
-        NokeDeviceManager.shared().startScanForNokeDevices()
-        
-        resolve(["status": true])
+
+    @objc func createCommonEvents(noke: NokeDevice) -> [String: Any] {
+        return [
+            "name": noke.name,
+            "mac": noke.mac,
+            "session": noke.session!,
+            "status": true
+        ]
     }
-    
-    @objc func stopScan(
-        _ resolve: RCTPromiseResolveBlock,
-        rejecter reject: RCTPromiseRejectBlock
-        ) {
-        NokeDeviceManager.shared().stopScan()
-        
-        resolve(["status": true])
-    }
-    
+
     @objc func initiateNokeService(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
         ) {
         NokeDeviceManager.shared().delegate = self
-        
+
         resolve(["status": true])
     }
-    
+
+    @objc func startScan(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().startScanForNokeDevices()
+
+        resolve(["status": true])
+    }
+
+    @objc func stopScan(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().stopScan()
+
+        resolve(["status": true])
+    }
+
     @objc func addNokeDevice(
         _ data: Dictionary<String, String>,
         resolver resolve: RCTPromiseResolveBlock,
@@ -116,31 +124,62 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             name: data["name"]! as String,
             mac: data["mac"]! as String
         )
-        
-        noke?.setOfflineValues(
-            key: data["key"]! as String,
-            command: data["cmd"]! as String
-        )
+
+        let key = data["key"]! as String
+        let command = data["cmd"]! as String
+
+        if(key != "" && command != "") {
+            noke?.setOfflineValues(
+                key: key,
+                command: command
+            )
+        }
+
         NokeDeviceManager.shared().addNoke(noke!)
-        
+
         resolve(["status": true])
     }
-    
+
+    @objc func setOfflineData(
+        _ data: Dictionary<String, String>,
+        resolver resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+
+        if(currentNoke == nil) {
+            let error = NSError(domain: "", code: 404, userInfo: nil)
+            reject("message", "currentNoke is null", error)
+            return
+        }
+
+        let key = data["key"]! as String
+        let command = data["cmd"]! as String
+
+        if(key != "" && command != "") {
+            currentNoke?.setOfflineValues(
+                key: key,
+                command: command
+            )
+        }
+
+        resolve(createCommonEvents(noke: currentNoke!))
+    }
+
     @objc func sendCommands(
         _ command: String,
         resolver resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
     ) {
         if(currentNoke == nil) {
-            let error = NSError(domain: "", code: 200, userInfo: nil)
+            let error = NSError(domain: "", code: 404, userInfo: nil)
             reject("message", "currentNoke is null", error)
             return
         }
         currentNoke?.sendCommands(command)
-        
+
         resolve(["name": currentNoke?.name, "mac": currentNoke?.mac])
     }
-    
+
     @objc func disconnect(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
@@ -151,16 +190,41 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             return
         }
         NokeDeviceManager.shared().disconnectNokeDevice(currentNoke!)
-        
+
         resolve(["status": true])
     }
-    
+
+    @objc func removeAllNokes(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+
+        NokeDeviceManager.shared().removeAllNoke()
+
+        resolve([
+            "status": true
+            ])
+    }
+
+    @objc func removeNokeDevice(
+        _ mac: String,
+        resolver resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+
+        NokeDeviceManager.shared().removeNoke(mac: mac)
+
+        resolve([
+            "status": true
+            ])
+    }
+
     @objc func offlineUnlock(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
         ) {
         var event = [String: Any]()
-        
+
         if(currentNoke == nil) {
             event["success"] = false
         } else {
@@ -169,16 +233,16 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             event["name"] = currentNoke?.name ?? String()
             event["mac"] = currentNoke?.mac ?? String()
         }
-        
+
         resolve(event)
     }
-    
+
     @objc func getDeviceInfo(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
         ) {
         var event = [String: Any]()
-        
+
         if(currentNoke == nil) {
             event["success"] = false
         } else {
@@ -194,33 +258,8 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             event["lastSeen"] = currentNoke?.lastSeen ?? Double()
             event["version"] = currentNoke?.version ?? String()
         }
-        
+
         resolve(event)
-    }
-    
-    @objc func removeAllNokes(
-        _ resolve: RCTPromiseResolveBlock,
-        rejecter reject: RCTPromiseRejectBlock
-        ) {
-        
-        NokeDeviceManager.shared().removeAllNoke()
-        
-        resolve([
-            "status": true
-            ])
-    }
-    
-    @objc func removeNokeDevice(
-        _ mac: String,
-        resolver resolve: RCTPromiseResolveBlock,
-        rejecter reject: RCTPromiseRejectBlock
-        ) {
-        
-        NokeDeviceManager.shared().removeNoke(mac: mac)
-        
-        resolve([
-            "status": true
-            ])
     }
     
     override func supportedEvents() -> [String]! {

@@ -26,18 +26,18 @@ or
   - Add `import com.lynkxyz.noke.RNNokePackage;` to the imports at the top of the file
   - Add `new RNNokePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-noke'
-  	project(':react-native-noke').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-noke/android')
-  	```
+    ```
+    include ':react-native-noke'
+    project(':react-native-noke').projectDir = new File(rootProject.projectDir,   '../node_modules/react-native-noke/android')
+    ```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
+    ```
       compile project(':react-native-noke')
-  	```
+    ```
 4. After adding the dependency to your Android Manifest
-	```
-	<service android:name="com.noke.nokemobilelibrary.NokeDeviceManagerService" android:enabled="true"/>
-	```
+  ```
+  <service android:name="com.noke.nokemobilelibrary.NokeDeviceManagerService" android:enabled="true"/>
+  ```
 
 
 ## Usage
@@ -45,78 +45,84 @@ or
 import RNNoke from 'react-native-noke';
 
 export default class App extends Component {
-	componentDidMount() {
-		this.requestLocationPermission() // only Android
+  componentDidMount() {
+    this.requestLocationPermission() // only Android
 
-		RNNoke.initiateNokeService()
-		.then(noke => {
-			console.log('noke', noke)
+    RNNoke.initiateNokeService()
+    .then(noke => {
+      console.log('noke', noke)
 
-			RNNoke
-			.on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
-			.on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
-			.on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) 
-			.on('onNokeConnecting', data => console.log('onNokeConnecting', data))
-			.on('onNokeConnected', data => console.log('onNokeConnected', data))
-			.on('onNokeSyncing', data => console.log('onNokeSyncing', data))
-			.on('onNokeUnlocked', data => console.log('onNokeUnlocked', data))
-			.on('onNokeDisconnected', data => console.log('onNokeDisconnected', data))
-			.on('onBluetoothStatusChanged', data => console.log('onBluetoothStatusChanged', data))
-			.on('onError', data => console.log('onError', data))
-		})
-	}
+      RNNoke
+      .on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
+      .on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
+      .on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) 
+      .on('onNokeConnecting', data => console.log('onNokeConnecting', data))
+      .on('onNokeConnected', data => console.log('onNokeConnected', data))
+      .on('onNokeSyncing', data => console.log('onNokeSyncing', data))
+      .on('onNokeUnlocked', data => console.log('onNokeUnlocked', data))
+      .on('onNokeDisconnected', data => console.log('onNokeDisconnected', data))
+      .on('onBluetoothStatusChanged', data => console.log('onBluetoothStatusChanged', data))
+      .on('onError', data => console.log('onError', data))
+    })
+  }
 
-	requestLocationPermission = () => {
-		if(Platform.OS === 'ios') return
+  requestLocationPermission = () => {
+    if(Platform.OS === 'ios') return
 
-		return PermissionsAndroid.request(
-			PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-			{
-				'title': 'Cool Location Permission',
-				'message': 'Cool Location App needs access to your location '
-			}
-		)
-		.then(console.log)
-		.catch(console.error)
-	}
+    return PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        'title': 'Cool Location Permission',
+        'message': 'Cool Location App needs access to your location '
+      }
+    )
+    .then(console.log)
+    .catch(console.error)
+  }
+  
+  setNokeOfflineData = () => {
+    RNNoke.setNokeOfflineData()
+    .then(console.log)
+    .catch(console.error)
+  }
 
-	onUnlock = () => {
-		RNNoke.offlineUnlock()
-		.then(console.log)
-		.catch(console.error)
-	}
+  onUnlock = () => {
+    RNNoke.offlineUnlock()
+    .then(console.log)
+    .catch(console.error)
+  }
 
-	onAddNoke = () => {
-		RNNoke.addNokeDevice({
-			name: 'NokeName',
-			mac: "NOKE_MAC_ADDRESS",
-			key: "OFFLINE_UNLOCK_KEY",
-			cmd: "OFFLINE_UNLOCK_COMMAND"
-		})
-		.then(console.log)
-		.catch(console.error)
-	}
+  onAddNoke = () => {
+    RNNoke.addNokeDevice({
+      name: 'NokeName',
+      mac: "NOKE_MAC_ADDRESS",
+      key: "OFFLINE_UNLOCK_KEY",
+      cmd: "OFFLINE_UNLOCK_COMMAND"
+    })
+    .then(console.log)
+    .catch(console.error)
+  }
 
-	onSendCommands = () => {
-		RNNoke.sendCommands("COMMAND_STRING")
-		.then(console.log)
-		.catch(console.error)
-	}
+  onSendCommands = () => {
+    RNNoke.sendCommands("COMMAND_STRING")
+    .then(console.log)
+    .catch(console.error)
+  }
 
-	onRemoveAllNokes = () => {
-		RNNoke.removeAllNokes()
-		.then(console.log)
-		.catch(console.error)
-	}
-	
-	getDeviceInfo = () => {
-	  RNNoke.getDeviceInfo()
-  	.then(console.log)
-  	.catch(console.error)
+  onRemoveAllNokes = () => {
+    RNNoke.removeAllNokes()
+    .then(console.log)
+    .catch(console.error)
+  }
+  
+  getDeviceInfo = () => {
+    RNNoke.getDeviceInfo()
+    .then(console.log)
+    .catch(console.error)
   }
   
   onStartScan = () => {
-	  RNNoke.startScan()
+    RNNoke.startScan()
     .then(console.log)
     .catch(console.error)
   }
@@ -127,32 +133,32 @@ export default class App extends Component {
     .catch(console.error)
   }
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<Button
-					onPress={this.onSendCommands}
-					title="Unlock noke by commands"
-				/>
+  render() {
+    return (
+      <View style={styles.container}>
+        <Button
+          onPress={this.onSendCommands}
+          title="Unlock noke by commands"
+        />
 
-				<Button
-					onPress={this.onUnlock}
-					title="Unlock noke offline"
-				/>
+        <Button
+          onPress={this.onUnlock}
+          title="Unlock noke offline"
+        />
 
 
-				<Button
-					onPress={this.onAddNoke}
-					title="Add noke"
-				/>
+        <Button
+          onPress={this.onAddNoke}
+          title="Add noke"
+        />
 
-				<Button
-					onPress={this.onRemoveAllNokes}
-					title="Remove noke"
-				/>
-			</View>
-		)
-	}
+        <Button
+          onPress={this.onRemoveAllNokes}
+          title="Remove noke"
+        />
+      </View>
+    )
+  }
 }
 ```
 
