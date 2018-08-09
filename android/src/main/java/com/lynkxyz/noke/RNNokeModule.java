@@ -201,7 +201,34 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
         event.putBoolean("success", false);
       } else {
         event.putBoolean("success", true);
+
         currentNoke.offlineUnlock();
+      }
+      promise.resolve(event);
+    } catch (IllegalViewOperationException e) {
+      promise.reject("message", e.getMessage());
+    }
+  }
+
+  @ReactMethod
+  public void getDeviceInfo(Promise promise) {
+    try {
+      WritableMap event = Arguments.createMap();
+
+      if (currentNoke == null) {
+        event.putBoolean("success", false);
+      } else {
+        event.putBoolean("success", true);
+        event.putString("name", currentNoke.getName());
+        event.putInt("battery", currentNoke.getBattery());
+        event.putString("mac", currentNoke.getMac());
+        event.putString("offlineKey", currentNoke.getOfflineKey());
+        event.putString("offlineUnlockCmd", currentNoke.getOfflineUnlockCmd());
+        event.putString("serial", currentNoke.getSerial());
+        event.putString("session", currentNoke.getSession());
+        event.putString("trackingKey", currentNoke.getTrackingKey());
+        event.putDouble("lastSeen", currentNoke.getLastSeen());
+        event.putString("version", currentNoke.getVersion());
       }
       promise.resolve(event);
     } catch (IllegalViewOperationException e) {

@@ -159,15 +159,40 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
         ) {
-        var event: [String: Any] = [
-            "name": currentNoke?.name ?? String(),
-            "mac": currentNoke?.mac ?? String()
-        ]
+        var event = [String: Any]()
+        
         if(currentNoke == nil) {
             event["success"] = false
         } else {
             currentNoke?.offlineUnlock()
             event["success"] = true
+            event["name"] = currentNoke?.name ?? String()
+            event["mac"] = currentNoke?.mac ?? String()
+        }
+        
+        resolve(event)
+    }
+    
+    @objc func getDeviceInfo(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        var event = [String: Any]()
+        
+        if(currentNoke == nil) {
+            event["success"] = false
+        } else {
+            event["success"] = true
+            event["name"] = currentNoke?.name ?? String()
+            event["battery"] = currentNoke?.battery ?? Int()
+            event["mac"] = currentNoke?.mac ?? String()
+            event["offlineKey"] = currentNoke?.offlineKey ?? String()
+            event["offlineUnlockCmd"] = currentNoke?.unlockCmd ?? String()
+            event["serial"] = currentNoke?.serial ?? String()
+            event["session"] = currentNoke?.session ?? String()
+            event["trackingKey"] = currentNoke?.trackingKey ?? String()
+            event["lastSeen"] = currentNoke?.lastSeen ?? Double()
+            event["version"] = currentNoke?.version ?? String()
         }
         
         resolve(event)

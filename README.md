@@ -4,7 +4,9 @@
 ## Getting started
 
 `$ npm install react-native-noke --save`
+
 or
+
 `$ yarn add react-native-noke`
 
 ### Manual installation
@@ -106,6 +108,24 @@ export default class App extends Component {
 		.then(console.log)
 		.catch(console.error)
 	}
+	
+	getDeviceInfo = () => {
+	  RNNoke.getDeviceInfo()
+  	.then(console.log)
+  	.catch(console.error)
+  }
+  
+  onStartScan = () => {
+	  RNNoke.startScan()
+    .then(console.log)
+    .catch(console.error)
+  }
+    
+  onStopScan = () => {
+    RNNoke.stopScan()
+    .then(console.log)
+    .catch(console.error)
+  }
 
 	render() {
 		return (
