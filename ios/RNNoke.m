@@ -87,7 +87,8 @@ RCT_EXTERN_METHOD(
                   )
 
 RCT_EXTERN_METHOD(
-                  setOfflineData:(RCTPromiseResolveBlock)resolve
+                  setOfflineData:(NSDictionary) value
+                  resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 @end
