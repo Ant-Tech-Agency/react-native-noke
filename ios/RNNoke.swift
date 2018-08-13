@@ -238,10 +238,10 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         var event = [String: Any]()
 
         if(currentNoke == nil) {
-            event["success"] = false
+            event["status"] = false
         } else {
             currentNoke?.offlineUnlock()
-            event["success"] = true
+            event["status"] = true
             event["name"] = currentNoke?.name ?? String()
             event["mac"] = currentNoke?.mac ?? String()
         }
@@ -256,9 +256,9 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         var event = [String: Any]()
 
         if(currentNoke == nil) {
-            event["success"] = false
+            event["status"] = false
         } else {
-            event["success"] = true
+            event["status"] = true
             event["name"] = currentNoke?.name ?? String()
             event["battery"] = currentNoke?.battery ?? Int()
             event["mac"] = currentNoke?.mac ?? String()
