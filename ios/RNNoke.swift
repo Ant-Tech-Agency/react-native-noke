@@ -158,14 +158,17 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         rejecter reject: RCTPromiseRejectBlock
         ) {
 
-        if(currentNoke == nil) {
-            let error = NSError(domain: "", code: 404, userInfo: nil)
-            reject("message", "currentNoke is null", error)
-            return
-        }
-
         let key = data["key"]! as String
         let command = data["cmd"]! as String
+        let name = data["name"]! as String
+        let mac = data["mac"]! as String
+
+        if(currentNoke == nil && name != "" && mac != "") {
+            currentNoke = NokeDevice.init(
+                name: name,
+                mac: mac
+            )
+        }
 
         if(key != "" && command != "") {
             currentNoke?.setOfflineValues(
@@ -256,9 +259,9 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         var event = [String: Any]()
 
         if(currentNoke == nil) {
-            event["status"] = false
+            event["success"] = false
         } else {
-            event["status"] = true
+            event["success"] = true
             event["name"] = currentNoke?.name ?? String()
             event["battery"] = currentNoke?.battery ?? Int()
             event["mac"] = currentNoke?.mac ?? String()

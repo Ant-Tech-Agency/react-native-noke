@@ -143,14 +143,22 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
         return;
       }
 
-      if(currentNoke == null) {
-        promise.reject("message", "currentNoke is null");
+      if(currentNoke == null && data.hasKey("name") && data.hasKey("mac")) {
+        currentNoke = new NokeDevice(
+                data.getString("name"),
+                data.getString("mac")
+        );
+      } else {
+        promise.reject("message", "Missing name or mac attributes");
         return;
       }
 
       if (data.hasKey("key") && data.hasKey("cmd")) {
         currentNoke.setOfflineKey(data.getString("key"));
         currentNoke.setOfflineUnlockCmd(data.getString("cmd"));
+      } else {
+          promise.reject("message", "Missing key or command attributes");
+          return;
       }
 
       promise.resolve(createCommonEvents(currentNoke));
