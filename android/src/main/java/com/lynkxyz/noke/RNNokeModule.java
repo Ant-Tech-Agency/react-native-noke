@@ -144,13 +144,15 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       }
 
       if(currentNoke == null && data.hasKey("name") && data.hasKey("mac")) {
+        if (!data.hasKey("name") || !data.hasKey("mac")) {
+          promise.reject("message", "Missing name or mac attributes");
+          return;
+        }
+
         currentNoke = new NokeDevice(
                 data.getString("name"),
                 data.getString("mac")
         );
-      } else {
-        promise.reject("message", "Missing name or mac attributes");
-        return;
       }
 
       if (data.hasKey("key") && data.hasKey("cmd")) {
@@ -292,11 +294,6 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private ServiceConnection mServiceConnection = new ServiceConnection() {
 
     public void onServiceConnected(ComponentName className, IBinder rawBinder) {
-      final WritableMap initEvent = Arguments.createMap();
-      initEvent.putString("message", "On service connected");
-      initEvent.putBoolean("status", true);
-      emitDeviceEvent("onServiceConnected", initEvent);
-
       Log.w(TAG, "ON SERVICE CONNECTED");
 
       //Store reference to service
@@ -320,7 +317,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
       //Start bluetooth scanning
       // mNokeService.startScanningForNokeDevices();
-      String message = "Scanning for Noke Devices";
+      String message = "On service connected";
 
 
       if (!mNokeService.initialize()) {
