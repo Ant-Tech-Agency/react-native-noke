@@ -1,17 +1,18 @@
 import {
-  NativeModules,
-  NativeEventEmitter
+  NativeEventEmitter,
+  NativeModules
 } from 'react-native'
+import {
+  addNokeDeviceIfNeeded,
+  fromNokeEvents,
+  onEvent
+} from './events'
 
 const { RNNoke } = NativeModules
-const NokeEmitter = new NativeEventEmitter(RNNoke)
 
 export default {
   initiateNokeService: RNNoke.initiateNokeService,
-  on(eventName, callback) {
-    NokeEmitter.addListener(eventName, callback)
-    return this
-  },
+  on: onEvent,
   offlineUnlock: RNNoke.offlineUnlock,
   sendCommands: RNNoke.sendCommands,
   addNokeDevice: RNNoke.addNokeDevice,
@@ -22,6 +23,8 @@ export default {
   disconnect: RNNoke.disconnect,
   getDeviceInfo: RNNoke.getDeviceInfo,
   setOfflineData: RNNoke.setOfflineData,
+  fromNokeEvents,
+  addNokeDeviceIfNeeded,
 
   AUTHOR: RNNoke.AUTHOR
 }
