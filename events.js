@@ -12,20 +12,28 @@ export const onEvent = function (eventName, callback) {
   return this
 }
 
-export const addNokeDeviceIfNeeded = (data) => {
+export const addNokeAndStopScan = data => {
+  return RNNoke.addNokeDevice({
+    name: data.name,
+    mac: data.macAddress,
+    key: data.key,
+    cmd: data.command
+  })
+  .then(() => {
+    return RNNoke.stopScan()
+  })
+}
+
+export const addNokeFactory = removeNokeP => data => {
+  if (!Observable) return {
+    message: 'Missing rxjs'
+  }
+
   if (Observable) {
     return Observable.create(observer => {
-      RNNoke.removeNokeDevice(data.macAddress)
+      removeNokeP(data)
       .then(() => {
-        return RNNoke.addNokeDevice({
-          name: data.name,
-          mac: data.macAddress,
-          key: data.key,
-          cmd: data.command
-        })
-      })
-      .then(() => {
-        return RNNoke.stopScan()
+        return addNokeAndStopScan(data)
       })
       .then(() => {
         observer.next()
@@ -35,8 +43,14 @@ export const addNokeDeviceIfNeeded = (data) => {
       })
     })
   }
+}
 
-  return RNNoke.addNokeDevice(data)
+export const addNokeDeviceIfNeeded = (data) => {
+  return addNokeFactory(() => RNNoke.removeNokeDevice(data.macAddress))(data)
+}
+
+export const addNokeDeviceOnce = (data) => {
+  return addNokeFactory(() => RNNoke.removeAllNokes())(data)
 }
 
 export const fromNokeEvents = () => {

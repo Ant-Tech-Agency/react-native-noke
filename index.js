@@ -4,6 +4,7 @@ import {
 } from 'react-native'
 import {
   addNokeDeviceIfNeeded,
+  addNokeDeviceOnce,
   fromNokeEvents,
   onEvent
 } from './events'
@@ -25,6 +26,7 @@ export default {
   setOfflineData: RNNoke.setOfflineData,
   fromNokeEvents,
   addNokeDeviceIfNeeded,
+  addNokeDeviceOnce,
 
   AUTHOR: RNNoke.AUTHOR
 }
