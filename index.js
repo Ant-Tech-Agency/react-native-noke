@@ -15,8 +15,12 @@ export default {
   initiateNokeService: RNNoke.initiateNokeService,
   on: onEvent,
   offlineUnlock: RNNoke.offlineUnlock,
-  sendCommands: RNNoke.sendCommands,
-  addNokeDevice: RNNoke.addNokeDevice,
+  sendCommands(command, data = {}) {
+    return RNNoke.sendCommands(command, data)
+  },
+  addNokeDevice(data) {
+    return RNNoke.addNokeDevice(data)
+  },
   removeAllNokes: RNNoke.removeAllNokes,
   removeNokeDevice: RNNoke.removeNokeDevice,
   startScan: RNNoke.startScan,

@@ -128,6 +128,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
         return;
       }
       mNokeService.addNokeDevice(noke);
+//      mNokeService.uploadData();
 
       promise.resolve(createCommonEvents(noke));
     } catch (IllegalViewOperationException e) {
@@ -139,7 +140,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   public void setOfflineData(ReadableMap data, Promise promise) {
     try {
       if (mNokeService == null) {
-        promise.reject("message", "currentNoke is null");
+        promise.reject("message", "mNokeService is null");
         return;
       }
 
@@ -170,13 +171,26 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void sendCommands(String command, Promise promise) {
+  public void sendCommands(String command, ReadableMap data, Promise promise) {
     try {
-      if(currentNoke == null) {
-        promise.reject("message", "currentNoke is null");
-        return;
+      if(mNokeService == null) {
+        Log.e("SEND_COMMANDS", "mNokeService is null");
       }
-      currentNoke.sendCommands(command);
+      if(currentNoke == null) {
+        Log.e("SEND_COMMANDS", "currentNoke is null");
+//        promise.reject("message", "currentNoke is null");
+//        return;
+//        NokeDevice noke = new NokeDevice(
+//                data.getString("name"),
+//                data.getString("mac")
+//        );
+//        currentNoke = noke;
+//        noke.sendCommands(command);
+      }
+
+      if(currentNoke != null) {
+        currentNoke.sendCommands(command);
+      }
 
       promise.resolve(createCommonEvents(currentNoke));
     } catch (IllegalViewOperationException e) {
@@ -191,6 +205,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       return;
     }
     if(currentNoke == null) {
+      Log.e("disconnect", "currentNoke is null");
       promise.reject("message", "currentNoke is null");
       return;
     }
@@ -341,12 +356,14 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private NokeServiceListener mNokeServiceListener = new NokeServiceListener() {
     @Override
     public void onNokeDiscovered(NokeDevice noke) {
+      currentNoke = noke;
       mNokeService.connectToNoke(noke);
       emitDeviceEvent("onNokeDiscovered", createCommonEvents(noke));
     }
 
     @Override
     public void onNokeConnecting(NokeDevice noke) {
+      currentNoke = noke;
       emitDeviceEvent("onNokeConnecting", createCommonEvents(noke));
     }
 
@@ -397,6 +414,8 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
         case NokeMobileError.ERROR_BLUETOOTH_DISABLED:
           break;
         case NokeMobileError.ERROR_BLUETOOTH_GATT:
+          break;
+        case NokeMobileError.DEVICE_ERROR_INVALID_KEY:
           break;
       }
       final WritableMap event = Arguments.createMap();

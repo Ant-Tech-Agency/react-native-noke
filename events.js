@@ -58,6 +58,8 @@ export const fromNokeEvents = () => {
     message: 'Missing rxjs'
   }
 
+  console.log('%c testtt', 'background: red; color: white', )
+
   const events = [
     'onServiceConnected',
     'onNokeDiscovered',
