@@ -53,12 +53,12 @@ export const addNokeDeviceOnce = (data) => {
   return addNokeFactory(() => RNNoke.removeAllNokes())(data)
 }
 
+//export const debounce
+
 export const fromNokeEvents = () => {
   if (!Observable) return {
     message: 'Missing rxjs'
   }
-
-  console.log('%c testtt', 'background: red; color: white', )
 
   const events = [
     'onServiceConnected',
@@ -72,9 +72,24 @@ export const fromNokeEvents = () => {
     'onError'
   ]
 
+  let timer = null
+
   return Observable.create(observer => {
     events.map(eventName => {
       onEvent(eventName, (data = {}) => {
+        if(eventName === 'onNokeSyncing') {
+          timer = setTimeout(() => {
+            observer.next({
+              name: 'onNokeDisconnected'
+            })
+          }, 1500)
+        }
+
+        if(eventName === 'onNokeUnlocked') {
+          cacheEvents = []
+          clearTimeout(timer)
+        }
+
         observer.next({
           name: eventName,
           data
