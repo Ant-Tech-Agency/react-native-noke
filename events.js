@@ -53,7 +53,22 @@ export const addNokeDeviceOnce = (data) => {
   return addNokeFactory(() => RNNoke.removeAllNokes())(data)
 }
 
-//export const debounce
+export const debounceObserver = (observer) => {
+  let lastTime = Date.now()
+
+  return (eventName, data) => {
+    const newTime = Date.now()
+    const timpstamp = (newTime - lastTime)
+    console.log('%c timpstamp', 'background: red; color: white', timpstamp)
+    if(timpstamp > 1000) {
+      observer.next({
+        name: eventName,
+        data
+      })
+      lastTime = Date.now()
+    }
+  }
+}
 
 export const fromNokeEvents = () => {
   if (!Observable) return {
@@ -73,23 +88,55 @@ export const fromNokeEvents = () => {
   ]
 
   let timer = null
+  let _debounce = null
 
   return Observable.create(observer => {
+    _debounce = debounceObserver(observer)
+
     events.map(eventName => {
-      onEvent(eventName, (data = {}) => {
-        if(eventName === 'onNokeSyncing') {
+      //if(eventName === 'onNokeConnected') {
+      //  onEvent(eventName, (data = {}) => {
+      //    _debounce(eventName, data)
+      //  })
+      //  return
+      //}
+
+      if (eventName === 'onNokeSyncing') {
+        onEvent(eventName, (data = {}) => {
           timer = setTimeout(() => {
             observer.next({
-              name: 'onNokeDisconnected'
+              name: 'onNokeDisconnected',
+              data
             })
           }, 1500)
-        }
+        })
+        return
+      }
 
-        if(eventName === 'onNokeUnlocked') {
-          cacheEvents = []
+      if (eventName === 'onNokeConnecting') {
+        onEvent(eventName, (data = {}) => {
+          timer = setTimeout(() => {
+            observer.next({
+              name: 'onNokeDisconnected',
+              data
+            })
+          }, 3500)
+        })
+        return
+      }
+
+      if (eventName === 'onNokeUnlocked') {
+        onEvent(eventName, (data = {}) => {
           clearTimeout(timer)
-        }
+          observer.next({
+            name: eventName,
+            data
+          })
+        })
+        return
+      }
 
+      onEvent(eventName, (data = {}) => {
         observer.next({
           name: eventName,
           data

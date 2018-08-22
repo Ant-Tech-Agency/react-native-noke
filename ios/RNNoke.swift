@@ -43,8 +43,9 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     }
 
     func nokeErrorDidOccur(error: NokeDeviceManagerError, message: String, noke: NokeDevice?) {
+        print(message)
         var eventMsg = message
-        if(errMsg != "") {
+        if(message != "") {
             eventMsg = errMsg
         }
         sendEvent(withName: "onError", body: ["code": errCode,"message": eventMsg])
@@ -57,13 +58,13 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         case NokeManagerBluetoothState.poweredOn:
 //            NokeDeviceManager.shared().startScanForNokeDevices()
             message = "on"
-            code = 1
+            code = 12
             errMsg = ""
             errCode = 301
             break
         case NokeManagerBluetoothState.poweredOff:
             message = "off"
-            code = 0
+            code = 10
             errMsg = "Bluetooth is disabled"
             errCode = 302
             break

@@ -15,9 +15,7 @@ export default {
   initiateNokeService: RNNoke.initiateNokeService,
   on: onEvent,
   offlineUnlock: RNNoke.offlineUnlock,
-  sendCommands(command, data = {}) {
-    return RNNoke.sendCommands(command, data)
-  },
+  sendCommands: RNNoke.sendCommands,
   addNokeDevice(data) {
     return RNNoke.addNokeDevice(data)
   },
