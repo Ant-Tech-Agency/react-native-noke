@@ -1,3 +1,4 @@
+import { debounce } from 'lodash'
 import {
   NativeEventEmitter,
   NativeModules
@@ -53,23 +54,6 @@ export const addNokeDeviceOnce = (data) => {
   return addNokeFactory(() => RNNoke.removeAllNokes())(data)
 }
 
-export const debounceObserver = (observer) => {
-  let lastTime = Date.now()
-
-  return (eventName, data) => {
-    const newTime = Date.now()
-    const timpstamp = (newTime - lastTime)
-    console.log('%c timpstamp', 'background: red; color: white', timpstamp)
-    if(timpstamp > 1000) {
-      observer.next({
-        name: eventName,
-        data
-      })
-      lastTime = Date.now()
-    }
-  }
-}
-
 export const fromNokeEvents = () => {
   if (!Observable) return {
     message: 'Missing rxjs'
@@ -88,60 +72,84 @@ export const fromNokeEvents = () => {
   ]
 
   let timer = null
-  let _debounce = null
+  let lastEvent = ''
 
   return Observable.create(observer => {
-    _debounce = debounceObserver(observer)
+    onEvent('onNokeDiscovered', data => {
+      observer.next({
+        name: 'onNokeDiscovered',
+        data
+      })
+      lastEvent = 'onNokeDiscovered'
+    })
 
-    events.map(eventName => {
-      //if(eventName === 'onNokeConnected') {
-      //  onEvent(eventName, (data = {}) => {
-      //    _debounce(eventName, data)
-      //  })
-      //  return
-      //}
+    onEvent('onNokeConnecting', data => {
+      observer.next({
+        name: 'onNokeConnecting',
+        data
+      })
+      lastEvent = 'onNokeConnecting'
 
-      if (eventName === 'onNokeSyncing') {
-        onEvent(eventName, (data = {}) => {
-          timer = setTimeout(() => {
-            observer.next({
-              name: 'onNokeDisconnected',
-              data
-            })
-          }, 1500)
-        })
-        return
-      }
-
-      if (eventName === 'onNokeConnecting') {
-        onEvent(eventName, (data = {}) => {
-          timer = setTimeout(() => {
-            observer.next({
-              name: 'onNokeDisconnected',
-              data
-            })
-          }, 3500)
-        })
-        return
-      }
-
-      if (eventName === 'onNokeUnlocked') {
-        onEvent(eventName, (data = {}) => {
-          clearTimeout(timer)
-          observer.next({
-            name: eventName,
-            data
-          })
-        })
-        return
-      }
-
-      onEvent(eventName, (data = {}) => {
+      timer = setTimeout(() => {
         observer.next({
-          name: eventName,
+          name: 'onNokeDisconnected',
           data
         })
-      })
+        lastEvent = 'onNokeDisconnected'
+      }, 5000)
     })
+
+    onEvent('onNokeConnected', data => {
+      clearTimeout(timer)
+      if(lastEvent !== 'onNokeUnlocked') {
+        observer.next({
+          name: 'onNokeConnected',
+          data
+        })
+        lastEvent = 'onNokeConnected'
+      }
+    })
+
+    onEvent('onNokeSyncing', data => {
+      observer.next({
+        name: 'onNokeSyncing',
+        data
+      })
+      lastEvent = 'onNokeSyncing'
+
+      timer = setTimeout(() => {
+        observer.next({
+          name: 'onNokeDisconnected',
+          data
+        })
+        lastEvent = 'onNokeDisconnected'
+      }, 1500)
+    })
+
+    onEvent('onNokeUnlocked', data => {
+      clearTimeout(timer)
+      observer.next({
+        name: 'onNokeUnlocked',
+        data
+      })
+      lastEvent = 'onNokeUnlocked'
+    })
+
+    onEvent('onNokeDisconnected', data => {
+      observer.next({
+        name: 'onNokeDisconnected',
+        data
+      })
+      lastEvent = 'onNokeDisconnected'
+    })
+
+    onEvent('onError', data => {
+      observer.next({
+        name: 'onError',
+        data
+      })
+      lastEvent = 'onError'
+    })
+
   })
 }
