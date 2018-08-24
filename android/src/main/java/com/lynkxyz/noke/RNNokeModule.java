@@ -14,6 +14,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -24,8 +25,10 @@ import com.noke.nokemobilelibrary.NokeDeviceManagerService;
 import com.noke.nokemobilelibrary.NokeMobileError;
 import com.noke.nokemobilelibrary.NokeServiceListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IllformedLocaleException;
+import java.util.List;
 import java.util.Map;
 
 public class RNNokeModule extends ReactContextBaseJavaModule {
@@ -99,6 +102,121 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     }
   }
 
+  private void addOfflineData(NokeDevice noke, ReadableMap data) {
+    if (data.hasKey("key") && data.hasKey("command")) {
+      noke.setOfflineKey(data.getString("key"));
+      noke.setOfflineUnlockCmd(data.getString("command"));
+    }
+  }
+
+  private NokeDevice getCurrentNoke(ReadableMap data) {
+    String macAddress = data.hasKey("macAddress") ? data.getString("macAddress") : "";
+    String name = data.hasKey("name") ? data.getString("name") : "";
+
+    NokeDevice currentNoke = null;
+    ArrayList<NokeDevice> nokeDeviceArrayList = mNokeService.getAllNoke();
+    for(int i = 0; i < nokeDeviceArrayList.size(); i++) {
+      NokeDevice _currentNoke = nokeDeviceArrayList.get(i);
+      Boolean isMacEquals = _currentNoke.getMac().equals(macAddress);
+
+      if(isMacEquals) {
+        currentNoke = _currentNoke;
+      }
+    }
+
+    if(currentNoke == null) {
+      NokeDevice nokeDevice = new NokeDevice(
+              name,
+              macAddress
+      );
+      currentNoke = nokeDevice;
+      mNokeService.connectToNoke(nokeDevice);
+    }
+
+    return currentNoke;
+  }
+
+  private HashMap<String, String> getValuesFromData(ReadableMap data) {
+    String macAddress = data.hasKey("macAddress") ? data.getString("macAddress") : "";
+    String name = data.hasKey("name") ? data.getString("name") : "";
+    String key = data.hasKey("key") ? data.getString("key") : null;
+    String command = data.hasKey("command") ? data.getString("command") : null;
+
+    HashMap<String, String> hashMap = new HashMap<>();
+    hashMap.put("macAddress", macAddress);
+    hashMap.put("name", name);
+    hashMap.put("key", key);
+    hashMap.put("command", command);
+
+    return hashMap;
+  }
+
+  @ReactMethod
+  public void addNokeDeviceOnce(ReadableMap data, Promise promise) {
+    HashMap<String, String> values = getValuesFromData(data);
+    String macAddress = values.get("macAddress");
+    String name = values.get("name");
+    String key = values.get("key");
+    String command = values.get("command");
+
+    Integer flag = 0;
+    NokeDevice selectedNoke = null;
+    currentNoke = null;
+
+    ArrayList<NokeDevice> nokeDeviceArrayList = mNokeService.getAllNoke();
+    for(int i = 0; i < nokeDeviceArrayList.size(); i++) {
+      NokeDevice _currentNoke = nokeDeviceArrayList.get(i);
+      Boolean isMacEquals = _currentNoke.getMac().equals(macAddress);
+
+      if(!isMacEquals) {
+        flag++;
+        mNokeService.disconnectNoke(_currentNoke);
+      } else {
+        selectedNoke = _currentNoke;
+      }
+    }
+
+    if(selectedNoke != null) {
+      if(key != null && command != null) {
+        selectedNoke.setOfflineKey(key);
+        selectedNoke.setOfflineUnlockCmd(command);
+      }
+      currentNoke = selectedNoke;
+      mNokeService.connectToNoke(selectedNoke);
+    }
+
+    if(flag == nokeDeviceArrayList.size()) {
+      NokeDevice nokeDevice = new NokeDevice(
+              name,
+              macAddress
+      );
+      if(key != null && command != null) {
+        nokeDevice.setOfflineKey(key);
+        nokeDevice.setOfflineUnlockCmd(command);
+      }
+      mNokeService.addNokeDevice(nokeDevice);
+      selectedNoke = nokeDevice;
+      currentNoke = selectedNoke;
+    }
+
+    promise.resolve(createCommonEvents(selectedNoke));
+  }
+
+  @ReactMethod
+  public void sendCommands(ReadableMap data, Promise promise) {
+    ReadableArray commands = data.hasKey("commands") ? data.getArray("commands") : null;
+    NokeDevice nokeDevice = getCurrentNoke(data);
+
+    if(commands != null) {
+      ArrayList<Object> commandsArray = commands.toArrayList();
+      for (int i = 0; i < commandsArray.size(); i++) {
+        nokeDevice.sendCommands(commandsArray.get(i).toString());
+      }
+    }
+
+    promise.resolve(createCommonEvents(currentNoke));
+  }
+
   @ReactMethod
   public void addNokeDevice(ReadableMap data, Promise promise) {
     try {
@@ -128,7 +246,6 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
         return;
       }
       mNokeService.addNokeDevice(noke);
-//      mNokeService.uploadData();
 
       promise.resolve(createCommonEvents(noke));
     } catch (IllegalViewOperationException e) {
@@ -171,34 +288,6 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void sendCommands(String command, ReadableMap data, Promise promise) {
-    try {
-      if(mNokeService == null) {
-        Log.e("SEND_COMMANDS", "mNokeService is null");
-      }
-      if(currentNoke == null) {
-        Log.e("SEND_COMMANDS", "currentNoke is null");
-//        promise.reject("message", "currentNoke is null");
-//        return;
-//        NokeDevice noke = new NokeDevice(
-//                data.getString("name"),
-//                data.getString("mac")
-//        );
-//        currentNoke = noke;
-//        noke.sendCommands(command);
-      }
-
-      if(currentNoke != null) {
-        currentNoke.sendCommands(command);
-      }
-
-      promise.resolve(createCommonEvents(currentNoke));
-    } catch (IllegalViewOperationException e) {
-      promise.reject("message", e.getMessage());
-    }
-  }
-
-  @ReactMethod
   public void disconnect(Promise promise) {
     if(mNokeService == null) {
       promise.reject("message", "mNokeService is null");
@@ -232,34 +321,25 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void removeNokeDevice(String mac, Promise promise) {
-    try {
       mNokeService.removeNokeDevice(mac);
 
       final WritableMap event = Arguments.createMap();
       event.putBoolean("status", true);
 
       promise.resolve(event);
-    } catch (IllegalViewOperationException e) {
-      promise.reject("message", e.getMessage());
-    }
   }
 
   @ReactMethod
-  public void offlineUnlock(Promise promise) {
-    try {
-      WritableMap event = createCommonEvents(currentNoke);
+  public void offlineUnlock(ReadableMap data, Promise promise) {
+    NokeDevice nokeDevice = getCurrentNoke(data);
+    WritableMap event = createCommonEvents(nokeDevice);
 
-      if (currentNoke == null) {
-        event.putBoolean("success", false);
-      } else {
-        event.putBoolean("success", true);
+    if (nokeDevice.getOfflineUnlockCmd() != null){
+      event.putBoolean("success", true);
 
-        currentNoke.offlineUnlock();
-      }
-      promise.resolve(event);
-    } catch (IllegalViewOperationException e) {
-      promise.reject("message", e.getMessage());
+      nokeDevice.offlineUnlock();
     }
+    promise.resolve(event);
   }
 
   @ReactMethod
@@ -291,15 +371,11 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
   @Override
   public String getName() {
-    // Tell React the name of the module
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
     return REACT_CLASS;
   }
 
   @Override
   public Map<String, Object> getConstants() {
-    // Export any constants to be used in your native module
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
     final Map<String, Object> constants = new HashMap<>();
     constants.put("AUTHOR", "linh_the_human");
 
@@ -310,28 +386,8 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
     public void onServiceConnected(ComponentName className, IBinder rawBinder) {
       Log.w(TAG, "ON SERVICE CONNECTED");
-
-      //Store reference to service
       mNokeService = ((NokeDeviceManagerService.LocalBinder) rawBinder).getService();
-
-      //Uncomment to allow devices that aren't in the device array
-      //mNokeService.setAllowAllDevices(true);
-
-      //Register callback listener
       mNokeService.registerNokeListener(mNokeServiceListener);
-
-      //Add locks to device manager
-
-
-            /*
-            Sets the url to use for uploading responses from the lock to the API.  This is the only
-            case where the mobile app should be making requests to the Noke Core API directly.
-             */
-
-      //mNokeService.setUploadUrl("UPLOAD URL HERE");
-
-      //Start bluetooth scanning
-      // mNokeService.startScanningForNokeDevices();
       String message = "On service connected";
 
 
@@ -356,14 +412,15 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private NokeServiceListener mNokeServiceListener = new NokeServiceListener() {
     @Override
     public void onNokeDiscovered(NokeDevice noke) {
-      currentNoke = noke;
+//      mNokeService.stopScanning();
+//      currentNoke = noke;
       mNokeService.connectToNoke(noke);
       emitDeviceEvent("onNokeDiscovered", createCommonEvents(noke));
     }
 
     @Override
     public void onNokeConnecting(NokeDevice noke) {
-      currentNoke = noke;
+//      currentNoke = noke;
       emitDeviceEvent("onNokeConnecting", createCommonEvents(noke));
     }
 
@@ -388,6 +445,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     public void onNokeDisconnected(NokeDevice noke) {
       emitDeviceEvent("onNokeDisconnected", createCommonEvents(noke));
       currentNoke = null;
+      mNokeService.stopScanning();
 //      mNokeService.uploadData();
     }
 
@@ -407,16 +465,16 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     public void onError(NokeDevice noke, int error, String message) {
       Log.e(TAG, "NOKE SERVICE ERROR " + error + ": " + message);
       switch (error) {
-        case NokeMobileError.ERROR_LOCATION_PERMISSIONS_NEEDED:
-          break;
-        case NokeMobileError.ERROR_LOCATION_SERVICES_DISABLED:
-          break;
-        case NokeMobileError.ERROR_BLUETOOTH_DISABLED:
-          break;
-        case NokeMobileError.ERROR_BLUETOOTH_GATT:
-          break;
+//        case NokeMobileError.ERROR_LOCATION_PERMISSIONS_NEEDED:
+//          return;
+//        case NokeMobileError.ERROR_LOCATION_SERVICES_DISABLED:
+//          return;
+//        case NokeMobileError.ERROR_BLUETOOTH_DISABLED:
+//          return;
+//        case NokeMobileError.ERROR_BLUETOOTH_GATT:
+//          return;
         case NokeMobileError.DEVICE_ERROR_INVALID_KEY:
-          break;
+          return;
       }
       final WritableMap event = Arguments.createMap();
       event.putInt("code", error);

@@ -3,8 +3,6 @@ import {
   NativeModules
 } from 'react-native'
 import {
-  addNokeDeviceIfNeeded,
-  addNokeDeviceOnce,
   fromNokeEvents,
   onEvent
 } from './events'
@@ -26,9 +24,8 @@ export default {
   disconnect: RNNoke.disconnect,
   getDeviceInfo: RNNoke.getDeviceInfo,
   setOfflineData: RNNoke.setOfflineData,
+  addNokeDeviceOnce: RNNoke.addNokeDeviceOnce,
   fromNokeEvents,
-  addNokeDeviceIfNeeded,
-  addNokeDeviceOnce,
 
   AUTHOR: RNNoke.AUTHOR
 }
