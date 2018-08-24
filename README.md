@@ -9,6 +9,10 @@ or
 
 `$ yarn add react-native-noke`
 
+or latest version
+
+`$ yarn add git+git+https://github.com/Ant-Tech-Agency/react-native-noke.git`
+
 ### Manual installation
 
 
@@ -43,27 +47,81 @@ or
 ## Usage
 ```javascript
 import RNNoke from 'react-native-noke';
+RNNoke.initiateNokeService()
 
-export default class App extends Component {
+interface NokeData {
+  name?: string
+  key?: string
+  command?: string
+  macAddress: string
+}
+
+interface NokeCommandsData {
+  macAddress: string  
+  commands: string[]
+}
+
+interface NokeResponse {
+  name: string,
+  mac: string,
+  session: string,
+  status: boolean,
+}
+
+interface NokeInfoResponse {
+  name: string,
+  battery: number,
+  mac: string,
+  offlineKey: string,
+  offlineUnlockCmd: string,
+  serial: string,
+  session: string,
+  trackingKey: string,
+  lastSeen: number,
+  version: string,
+}
+
+type EventName = 
+  'onServiceConnected' | // only Android
+  'onServiceDisconnected' | // only Android
+  'onNokeDiscovered' |
+  'onNokeConnecting' |
+  'onNokeConnected' |
+  'onNokeSyncing' |
+  'onNokeUnlocked' |
+  'onNokeDisconnected' |
+  'onBluetoothStatusChanged' |
+  'onError'
+  
+interface RNNoke {
+  initiateNokeService: () => Promise<{status: boolean}>
+  startScan: () => Promise<{status: boolean}>
+  stopScan: () => Promise<{status: boolean}>
+  addNokeDeviceOnce: (data: NokeData) => Promise<NokeResponse>
+  sendCommands: (data: NokeCommandsData) => Promise<NokeResponse>
+  removeAllNokes: () => Promise<null>
+  removeNokeDevice: () => Promise<null>
+  offlineUnlock: () => Promise<NokeResponse>
+  getDeviceInfo: () => Promise<NokeInfoResponse>
+  on: (eventName: EventName, callback: (response: NokeResponse) => RNNoke) => void
+  fromNokeEvents: () => Observable<{name: EventName, data: NokeResponse}>
+}
+
+export class App extends Component {
   componentDidMount() {
     this.requestLocationPermission() // only Android
 
-    RNNoke.initiateNokeService()
-    .then(noke => {
-      console.log('noke', noke)
-
-      RNNoke
-      .on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
-      .on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
-      .on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) 
-      .on('onNokeConnecting', data => console.log('onNokeConnecting', data))
-      .on('onNokeConnected', data => console.log('onNokeConnected', data))
-      .on('onNokeSyncing', data => console.log('onNokeSyncing', data))
-      .on('onNokeUnlocked', data => console.log('onNokeUnlocked', data))
-      .on('onNokeDisconnected', data => console.log('onNokeDisconnected', data))
-      .on('onBluetoothStatusChanged', data => console.log('onBluetoothStatusChanged', data))
-      .on('onError', data => console.log('onError', data))
-    })
+    RNNoke
+    .on('onServiceConnected', data => console.log('onServiceConnected', data)) // only Android 
+    .on('onServiceDisconnected', data => console.log('onServiceConnected', data)) // only Android
+    .on('onNokeDiscovered', data => console.log('onNokeDiscovered', data)) 
+    .on('onNokeConnecting', data => console.log('onNokeConnecting', data))
+    .on('onNokeConnected', data => console.log('onNokeConnected', data))
+    .on('onNokeSyncing', data => console.log('onNokeSyncing', data))
+    .on('onNokeUnlocked', data => console.log('onNokeUnlocked', data))
+    .on('onNokeDisconnected', data => console.log('onNokeDisconnected', data))
+    .on('onBluetoothStatusChanged', data => console.log('onBluetoothStatusChanged', data))
+    .on('onError', data => console.log('onError', data))
   }
 
   requestLocationPermission = () => {
@@ -79,32 +137,21 @@ export default class App extends Component {
     .then(console.log)
     .catch(console.error)
   }
-  
-  setNokeOfflineData = () => {
-    RNNoke.setNokeOfflineData()
-    .then(console.log)
-    .catch(console.error)
-  }
 
   onUnlock = () => {
-    RNNoke.offlineUnlock()
+    RNNoke.offlineUnlock(data)
     .then(console.log)
     .catch(console.error)
   }
 
   onAddNoke = () => {
-    RNNoke.addNokeDevice({
-      name: 'NokeName',
-      mac: "NOKE_MAC_ADDRESS",
-      key: "OFFLINE_UNLOCK_KEY",
-      cmd: "OFFLINE_UNLOCK_COMMAND"
-    })
+    RNNoke.addNokeDeviceOnce(data)
     .then(console.log)
     .catch(console.error)
   }
 
   onSendCommands = () => {
-    RNNoke.sendCommands("COMMAND_STRING")
+    RNNoke.sendCommands(data)
     .then(console.log)
     .catch(console.error)
   }
@@ -145,7 +192,6 @@ export default class App extends Component {
           onPress={this.onUnlock}
           title="Unlock noke offline"
         />
-
 
         <Button
           onPress={this.onAddNoke}
