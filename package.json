@@ -1,6 +1,6 @@
 {
   "name": "react-native-noke",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "Noke SDK for React-Native",
   "main": "index.js",
   "scripts": {

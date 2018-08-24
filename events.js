@@ -49,17 +49,17 @@ export const fromNokeEvents = () => {
       })
       lastEvent = 'onNokeConnecting'
 
-      timer = setTimeout(() => {
-        observer.next({
-          name: 'onNokeDisconnected',
-          data
-        })
-        lastEvent = 'onNokeDisconnected'
-      }, 5000)
+      //timer = setTimeout(() => {
+      //  observer.next({
+      //    name: 'onNokeDisconnected',
+      //    data
+      //  })
+      //  lastEvent = 'onNokeDisconnected'
+      //}, 5000)
     })
 
     onEvent('onNokeConnected', data => {
-      clearTimeout(timer)
+      //clearTimeout(timer)
       if(lastEvent !== 'onNokeUnlocked') {
         observer.next({
           name: 'onNokeConnected',
@@ -76,17 +76,17 @@ export const fromNokeEvents = () => {
       })
       lastEvent = 'onNokeSyncing'
 
-      timer = setTimeout(() => {
-        observer.next({
-          name: 'onNokeDisconnected',
-          data
-        })
-        lastEvent = 'onNokeDisconnected'
-      }, 1500)
+      //timer = setTimeout(() => {
+      //  observer.next({
+      //    name: 'onNokeDisconnected',
+      //    data
+      //  })
+      //  lastEvent = 'onNokeDisconnected'
+      //}, 1500)
     })
 
     onEvent('onNokeUnlocked', data => {
-      clearTimeout(timer)
+      //clearTimeout(timer)
       observer.next({
         name: 'onNokeUnlocked',
         data
