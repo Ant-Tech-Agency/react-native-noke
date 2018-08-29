@@ -101,7 +101,7 @@ interface RNNoke {
   sendCommands: (data: NokeCommandsData) => Promise<NokeResponse>
   removeAllNokes: () => Promise<null>
   removeNokeDevice: () => Promise<null>
-  offlineUnlock: () => Promise<NokeResponse>
+  offlineUnlock: (data: NokeData) => Promise<NokeResponse>
   getDeviceInfo: () => Promise<NokeInfoResponse>
   on: (eventName: EventName, callback: (response: NokeResponse) => RNNoke) => void
   fromNokeEvents: () => Observable<{name: EventName, data: NokeResponse}>
