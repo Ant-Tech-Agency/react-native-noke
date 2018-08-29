@@ -158,6 +158,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     NokeDevice nokeDevice = getCurrentNoke(macAddress);
 
     if(nokeDevice == null) {
+      promise.reject("100", "Noke device is null");
       return;
     }
 
@@ -189,6 +190,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     NokeDevice nokeDevice = getCurrentNoke(macAddress);
 
     if(nokeDevice == null) {
+      promise.reject("100", "Noke device is null");
       return;
     }
 
@@ -199,8 +201,6 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     }
 
     if (nokeDevice.getOfflineUnlockCmd() != null){
-      event.putBoolean("success", true);
-
       nokeDevice.offlineUnlock();
     }
     promise.resolve(event);
@@ -211,9 +211,9 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     WritableMap event = Arguments.createMap();
 
     if (currentNoke == null) {
-      event.putBoolean("success", false);
+      event.putBoolean("status", false);
     } else {
-      event.putBoolean("success", true);
+      event.putBoolean("status", true);
       event.putString("name", currentNoke.getName());
       event.putInt("battery", currentNoke.getBattery());
       event.putString("mac", currentNoke.getMac());
@@ -272,6 +272,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private NokeServiceListener mNokeServiceListener = new NokeServiceListener() {
     @Override
     public void onNokeDiscovered(NokeDevice noke) {
+      mNokeService.stopScanning();
       if(currentNoke.getMac().equals(noke.getMac())) {
         mNokeService.connectToNoke(noke);
       }

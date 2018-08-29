@@ -36,16 +36,22 @@ RCT_EXTERN_METHOD(
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
 
-
 RCT_EXTERN_METHOD(
                   addNokeDevice:(NSDictionary) value
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 
+RCT_EXTERN_METHOD(
+                  addNokeDeviceOnce:(NSDictionary) value
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
+
 
 RCT_EXTERN_METHOD(
-                  offlineUnlock:(RCTPromiseResolveBlock)resolve
+                  offlineUnlock:(NSDictionary) value
+                  resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 
@@ -61,7 +67,7 @@ RCT_EXTERN_METHOD(
                   )
 
 RCT_EXTERN_METHOD(
-                  sendCommands:(NSString) value
+                  sendCommands:(NSDictionary) value
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
@@ -83,12 +89,6 @@ RCT_EXTERN_METHOD(
 
 RCT_EXTERN_METHOD(
                   getDeviceInfo:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  setOfflineData:(NSDictionary) value
-                  resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 @end
