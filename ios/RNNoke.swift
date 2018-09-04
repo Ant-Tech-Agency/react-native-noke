@@ -14,7 +14,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         case .nokeDeviceConnectionStateDiscovered:
             NokeDeviceManager.shared().stopScan()
             
-            if(currentNoke?.mac != noke.mac) {
+            if(currentNoke?.mac == noke.mac) {
                 NokeDeviceManager.shared().connectToNokeDevice(noke)
             }
             lastEventCode = 0
@@ -77,55 +77,55 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         }
         sendEvent(withName: "onBluetoothStatusChanged", body: ["code": code, "message": message])
     }
-    
+
     func getCurrentNoke(macAddress: String) -> NokeDevice? {
         let nokeDevices = NokeDeviceManager.shared().nokeDevices
-        
+
         for noke in nokeDevices {
-            if nokeDevices.contains(noke) {
+            if noke.mac == macAddress {
                 return noke
             }
         }
-        
+
         return nil
     }
-    
+
     func addNokeIfNeeded(nokeHashMap: NokeHashMap) -> NokeDevice? {
         let name = nokeHashMap.name
         let key = nokeHashMap.key
         let command = nokeHashMap.command
         let macAddress = nokeHashMap.macAddress
-        
+
         var nokeDevice = getCurrentNoke(macAddress: macAddress)
-        
+
         if(nokeDevice == nil) {
             nokeDevice = NokeDevice.init(name: name, mac: macAddress)
             NokeDeviceManager.shared().addNoke(nokeDevice!)
         }
-        
-        if(nokeDevice?.offlineKey == nil) {
+
+        if(nokeDevice?.offlineKey == "") {
             if(key != "" && command != "") {
                 nokeDevice?.setOfflineValues(key: key, command: command)
             }
         }
-        
+
         currentNoke = nokeDevice
-        
+
         return nokeDevice
     }
-    
+
     @objc func addNokeDevice(
         _ data: Dictionary<String, Any>,
         resolver resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
     ) {
         let nokeHashMap = NokeHashMap.init(data: data)
-        
+
         let nokeDevice = addNokeIfNeeded(nokeHashMap: nokeHashMap)
-        
+
         resolve(createCommonEvents(noke: nokeDevice!))
     }
-    
+
     @objc func addNokeDeviceOnce(
         _ data: Dictionary<String, Any>,
         resolver resolve: RCTPromiseResolveBlock,
@@ -133,13 +133,13 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         ) {
         let nokeHashMap = NokeHashMap.init(data: data)
         let macAddress = nokeHashMap.macAddress
-        
+
         if(currentNoke != nil && currentNoke?.mac != macAddress) {
             NokeDeviceManager.shared().removeNoke(mac: macAddress)
         }
-        
+
         let nokeDevice = addNokeIfNeeded(nokeHashMap: nokeHashMap)
-        
+
         resolve(createCommonEvents(noke: nokeDevice!))
     }
 
@@ -197,18 +197,18 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         let macAddress = nokeHashMap.macAddress
         let commands = nokeHashMap.commands
         let nokeDevice = getCurrentNoke(macAddress: macAddress)
-        
+
         if (nokeDevice == nil) {
             reject("100", "Noke device is null", NSError(domain: "offlineUnlock", code: 100, userInfo: [:]))
             return
         }
-        
+
         if (!commands.isEmpty) {
             for cmd in commands {
                 nokeDevice?.sendCommands(cmd)
             }
         }
-        
+
         resolve(createCommonEvents(noke: nokeDevice!))
     }
 
@@ -241,21 +241,21 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         let nokeHashMap = NokeHashMap.init(data: data)
         let macAddress = nokeHashMap.macAddress
         let nokeDevice = getCurrentNoke(macAddress: macAddress)
-        
+
         if(nokeDevice == nil) {
             reject("100", "Noke device is null", NSError(domain: "offlineUnlock", code: 100, userInfo: [:]))
             return
         }
-        
+
         let event = createCommonEvents(noke: nokeDevice!)
-        
+
         if(lastEventCode == 4) {
             resolve(event)
             return
         }
-        
+
         if(nokeDevice?.unlockCmd != "") {
-            nokeDevice?.unlock()
+            nokeDevice?.offlineUnlock()
         }
         
         resolve(event)
