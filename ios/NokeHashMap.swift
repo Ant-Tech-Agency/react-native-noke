@@ -16,14 +16,24 @@ class NokeHashMap {
     var commands: [String] = []
     
     init(data: Dictionary<String, Any>) {
-        if(data["name"] == nil) {
-            return
+        if(data["name"] != nil) {
+            name = data["name"] as! String
         }
-        
-        name = data["name"] as! String
-        macAddress = data["macAddress"] as! String
-        key = data["key"] as! String
-        command = data["command"] as! String
-        commands = data["commands"] as! [String]
+
+        if(data["macAddress"] != nil) {
+            macAddress = data["macAddress"] as! String
+        }
+
+        if(data["key"] != nil) {
+            key = data["key"] as! String
+        }
+
+        if(data["command"] != nil) {
+            command = data["command"] as! String
+        }
+
+        if(data["commands"] != nil) {
+            commands = data["commands"] as! [String]
+        }
     }
 }
