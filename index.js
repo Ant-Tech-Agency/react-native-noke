@@ -6,6 +6,10 @@ import {
   fromNokeEvents,
   onEvent
 } from './events'
+import {
+  addNokeDeviceOnce$,
+  createNokeOptions
+} from './helpers'
 
 const { RNNoke } = NativeModules
 
@@ -25,7 +29,10 @@ export default {
   getDeviceInfo: RNNoke.getDeviceInfo,
   setOfflineData: RNNoke.setOfflineData,
   addNokeDeviceOnce: RNNoke.addNokeDeviceOnce,
+  setAPIKey: RNNoke.setAPIKey,
   fromNokeEvents,
+  addNokeDeviceOnce$,
+  createNokeOptions,
 
   AUTHOR: RNNoke.AUTHOR
 }

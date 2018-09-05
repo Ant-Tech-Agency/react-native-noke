@@ -166,6 +166,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         rejecter reject: RCTPromiseRejectBlock
         ) {
         NokeDeviceManager.shared().delegate = self
+        NokeDeviceManager.shared().uploadUrl = "https://v1.api.nokepro.com/lock/upload/"
 
         resolve(["status": true])
     }
@@ -176,7 +177,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         ) {
         NokeDeviceManager.shared().startScanForNokeDevices()
 
-        resolve(["status": true])
+        resolve(nil)
     }
 
     @objc func stopScan(
@@ -185,7 +186,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         ) {
         NokeDeviceManager.shared().stopScan()
 
-        resolve(["status": true])
+        resolve(nil)
     }
 
     @objc func sendCommands(
@@ -257,7 +258,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         if(nokeDevice?.unlockCmd != "") {
             nokeDevice?.offlineUnlock()
         }
-        
+
         resolve(event)
     }
 
@@ -284,6 +285,16 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         }
 
         resolve(event)
+    }
+
+    @objc func setAPIKey(
+        _ apiKey: String,
+        resolver resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().setAPIKey(apiKey)
+
+        resolve(nil)
     }
     
     override func supportedEvents() -> [String]! {

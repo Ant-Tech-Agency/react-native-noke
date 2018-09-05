@@ -91,4 +91,10 @@ RCT_EXTERN_METHOD(
                   getDeviceInfo:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
+
+RCT_EXTERN_METHOD(
+                  setAPIKey:(NSString) value
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 @end
