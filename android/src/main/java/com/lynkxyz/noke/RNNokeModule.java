@@ -65,7 +65,9 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private void initiateNokeService(Promise promise) {
     try {
       Intent nokeServiceIntent = new Intent(reactContext, NokeDeviceManagerService.class);
-      reactContext.bindService(nokeServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+      getReactApplicationContext().bindService(nokeServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+//      mNokeService.setUploadUrl("https://v1.api.nokepro.com/lock/upload/");
+
       WritableMap event = Arguments.createMap();
       event.putBoolean("status", true);
 
@@ -94,9 +96,13 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   private NokeDevice getCurrentNoke(String macAddress) {
-    LinkedHashMap<String, NokeDevice> nokeDevices = mNokeService.nokeDevices;
+    if(mNokeService != null) {
+      LinkedHashMap<String, NokeDevice> nokeDevices = mNokeService.nokeDevices;
 
-    return nokeDevices.get(macAddress);
+      return nokeDevices.get(macAddress);
+    }
+
+    return null;
   }
 
   private NokeDevice addNokeIfNeeded(NokeHashMap nokeHashMap) {
@@ -106,6 +112,10 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     String macAddress = nokeHashMap.getMacAddress();
 
     NokeDevice nokeDevice = getCurrentNoke(macAddress);
+
+    if(mNokeService == null) {
+      return null;
+    }
 
     if(nokeDevice == null) {
       nokeDevice = new NokeDevice(
@@ -133,6 +143,11 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
     NokeDevice nokeDevice = addNokeIfNeeded(nokeHashMap);
 
+    if(nokeDevice == null) {
+      promise.reject("300", "Can't get or add nokeDevice");
+      return;
+    }
+
     promise.resolve(createCommonEvents(nokeDevice));
   }
 
@@ -146,6 +161,11 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     }
 
     NokeDevice nokeDevice = addNokeIfNeeded(nokeHashMap);
+
+    if(nokeDevice == null) {
+      promise.reject("300", "Can't get or add nokeDevice");
+      return;
+    }
 
     promise.resolve(createCommonEvents(nokeDevice));
   }
@@ -180,6 +200,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void removeNokeDevice(String mac, Promise promise) {
     mNokeService.removeNokeDevice(mac);
+
     promise.resolve(null);
   }
 
@@ -229,6 +250,13 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     promise.resolve(event);
   }
 
+  @ReactMethod
+  public void setAPIKey(String apiKey, Promise promise) {
+    mNokeService.setApiKey(apiKey);
+
+    promise.resolve(null);
+  }
+
   @Override
   public String getName() {
     return REACT_CLASS;
@@ -243,13 +271,11 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   private ServiceConnection mServiceConnection = new ServiceConnection() {
-
     public void onServiceConnected(ComponentName className, IBinder rawBinder) {
       Log.d("CONNECT", "ON SERVICE CONNECTED");
       mNokeService = ((NokeDeviceManagerService.LocalBinder) rawBinder).getService();
       mNokeService.registerNokeListener(mNokeServiceListener);
       String message = "On service connected";
-
 
       if (!mNokeService.initialize()) {
         Log.e(TAG, "Unable to initialize Bluetooth");
@@ -309,11 +335,12 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       emitDeviceEvent("onNokeDisconnected", createCommonEvents(noke));
       mNokeService.stopScanning();
       lastEventCode = 5;
+      mNokeService.uploadData();
     }
 
     @Override
     public void onDataUploaded(int i, String s) {
-
+        Log.d("UPLOADED", s);
     }
 
     @Override
@@ -326,10 +353,10 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     @Override
     public void onError(NokeDevice noke, int error, String message) {
       Log.e(TAG, "NOKE SERVICE ERROR " + error + ": " + message);
-      switch (error) {
-        case NokeMobileError.DEVICE_ERROR_INVALID_KEY:
-          return;
-      }
+//      switch (error) {
+//        case NokeMobileError.DEVICE_ERROR_INVALID_KEY:
+//          return;
+//      }
       final WritableMap event = Arguments.createMap();
       event.putInt("code", error);
       event.putString("message", message);

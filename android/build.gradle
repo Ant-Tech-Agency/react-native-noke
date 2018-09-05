@@ -37,5 +37,6 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
-    compile 'com.noke.nokemobilelibrary:nokemobilelibrary:0.4.1'
+//    compile 'com.noke.nokemobilelibrary:nokemobilelibrary:0.4.1'
+    implementation 'com.github.Ant-Tech-Agency:noke-mobile-library-android:-SNAPSHOT'
 }
