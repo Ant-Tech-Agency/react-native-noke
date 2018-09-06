@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs/Observable'
+import RNNoke from './index'
 
 export const createNokeOptions = options => ({
   url: `https://v1.api.nokepro.com/lock/${options.url}`,
