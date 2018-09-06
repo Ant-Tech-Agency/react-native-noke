@@ -4,13 +4,14 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class NokeHashMap {
     private String name;
     private String macAddress;
     private String key;
     private String command;
-    private ArrayList<String> commands;
+    private ArrayList<String> commands = new ArrayList<>();
 
     public NokeHashMap(ReadableMap data) {
         if(data == null) {
@@ -22,10 +23,12 @@ public class NokeHashMap {
         key = data.hasKey("key") ? data.getString("key") : null;
         command = data.hasKey("command") ? data.getString("command") : null;
         ReadableArray readableArray = data.hasKey("commands") ? data.getArray("commands") : null;
-        ArrayList<Object> commands = new ArrayList<>();
 
         if(readableArray != null) {
-            commands = readableArray.toArrayList();
+            ArrayList<Object> list = readableArray.toArrayList();
+            for (Object object: list) {
+                commands.add(Objects.toString(object, null));
+            }
         }
     }
 

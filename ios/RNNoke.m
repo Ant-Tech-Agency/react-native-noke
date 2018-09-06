@@ -27,9 +27,16 @@
 // Export methods to a native module
 // https://facebook.github.io/react-native/docs/native-modules-ios.html#exporting-swift
 
-RCT_EXTERN_METHOD(initiateNokeService)
+RCT_EXTERN_METHOD(
+                  initiateNokeService:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 
-RCT_EXTERN_METHOD(offlineUnlock)
+RCT_EXTERN_METHOD(
+                  offlineUnlock:(NSDictionary) value
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 
 RCT_EXTERN_METHOD(
                   initiateNokeService: (RCTPromiseResolveBlock)resolve
@@ -72,10 +79,10 @@ RCT_EXTERN_METHOD(
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 
-RCT_EXTERN_METHOD(
-                  disconnect:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
+//RCT_EXTERN_METHOD(
+//                  disconnect:(RCTPromiseResolveBlock)resolve
+//                  rejecter:(RCTPromiseRejectBlock)reject
+//                  )
 
 RCT_EXTERN_METHOD(
                   startScan:(RCTPromiseResolveBlock)resolve
