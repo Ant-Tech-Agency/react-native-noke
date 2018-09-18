@@ -37,6 +37,8 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private NokeDeviceManagerService mNokeService = null;
   private NokeDevice currentNoke;
   private int lastEventCode = -1;
+  private boolean flag = false;
+  private boolean isDisconnect = false;
 
   public RNNokeModule(ReactApplicationContext context) {
     // Pass in the context to the constructor and save it so you can emit events
@@ -95,7 +97,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     promise.resolve(event);
   }
 
-  private NokeDevice getCurrentNoke(String macAddress) {
+  private NokeDevice getNoke(String macAddress) {
     if(mNokeService != null) {
       LinkedHashMap<String, NokeDevice> nokeDevices = mNokeService.nokeDevices;
 
@@ -111,7 +113,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     String command = nokeHashMap.getCommand();
     String macAddress = nokeHashMap.getMacAddress();
 
-    NokeDevice nokeDevice = getCurrentNoke(macAddress);
+    NokeDevice nokeDevice = getNoke(macAddress);
 
     if(mNokeService == null) {
       return null;
@@ -133,6 +135,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     }
 
     currentNoke = nokeDevice;
+    flag = false;
 
     return nokeDevice;
   }
@@ -175,7 +178,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     NokeHashMap nokeHashMap = new NokeHashMap(data);
     String macAddress = nokeHashMap.getMacAddress();
     ArrayList<String> commands = nokeHashMap.getCommands();
-    NokeDevice nokeDevice = getCurrentNoke(macAddress);
+    NokeDevice nokeDevice = getNoke(macAddress);
 
     if(nokeDevice == null) {
       promise.reject("100", "Noke device is null");
@@ -208,7 +211,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   public void offlineUnlock(ReadableMap data, Promise promise) {
     NokeHashMap nokeHashMap = new NokeHashMap(data);
     String macAddress = nokeHashMap.getMacAddress();
-    NokeDevice nokeDevice = getCurrentNoke(macAddress);
+    NokeDevice nokeDevice = getNoke(macAddress);
 
     if(nokeDevice == null) {
       promise.reject("100", "Noke device is null");
@@ -216,7 +219,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     }
 
     WritableMap event = createCommonEvents(nokeDevice);
-    if(lastEventCode == 4) {
+    if(lastEventCode == 4 || lastEventCode == 5) {
       promise.resolve(event);
       return;
     }
@@ -225,6 +228,23 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       nokeDevice.offlineUnlock();
     }
     promise.resolve(event);
+  }
+
+  @ReactMethod
+  public void disconnect(String macAddress, Promise promise) {
+//    NokeDevice nokeDevice = getNoke(macAddress);
+
+//    mNokeService.disconnectNoke(nokeDevice);
+
+    promise.resolve(null);
+  }
+
+  @ReactMethod
+  public void disconnectAll(Promise promise) {
+    mNokeService.disconnectNoke(currentNoke);
+    mNokeService.stopScanning();
+
+    promise.resolve(null);
   }
 
   @ReactMethod
@@ -252,7 +272,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void setAPIKey(String apiKey, Promise promise) {
-    mNokeService.setApiKey(apiKey);
+//    mNokeService.setApiKey(apiKey);
 
     promise.resolve(null);
   }
@@ -298,12 +318,13 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   private NokeServiceListener mNokeServiceListener = new NokeServiceListener() {
     @Override
     public void onNokeDiscovered(NokeDevice noke) {
-      mNokeService.stopScanning();
-      if(currentNoke.getMac().equals(noke.getMac())) {
+      if(!flag && currentNoke.getMac().equals(noke.getMac())) {
+        mNokeService.stopScanning();
         mNokeService.connectToNoke(noke);
+        lastEventCode = 0;
+        flag = true;
+        emitDeviceEvent("onNokeDiscovered", createCommonEvents(noke));
       }
-      lastEventCode = 0;
-      emitDeviceEvent("onNokeDiscovered", createCommonEvents(noke));
     }
 
     @Override
@@ -327,7 +348,9 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     @Override
     public void onNokeUnlocked(NokeDevice noke) {
       emitDeviceEvent("onNokeUnlocked", createCommonEvents(noke));
+//      mNokeService.disconnectNoke(noke);
       lastEventCode = 4;
+      flag = false;
     }
 
     @Override
@@ -335,7 +358,8 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
       emitDeviceEvent("onNokeDisconnected", createCommonEvents(noke));
       mNokeService.stopScanning();
       lastEventCode = 5;
-      mNokeService.uploadData();
+      flag = false;
+//      mNokeService.uploadData();
     }
 
     @Override
