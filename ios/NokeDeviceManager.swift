@@ -526,7 +526,7 @@ public class NokeDeviceManager: NSObject, CBCentralManagerDelegate, NokeDeviceDe
     internal func didReceiveUploadResponse(data: Data){
         let json = try? JSONSerialization.jsonObject(with: data, options: [])
         if let dictionary = json as? [String: Any] {
-            let errorCode = dictionary["error_code"] as! Int
+            let errorCode = dictionary["errorCode"] as! Int
             if(errorCode == 0){
                 self.clearUploadQueue()
             }

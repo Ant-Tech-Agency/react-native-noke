@@ -231,16 +231,7 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void disconnect(String macAddress, Promise promise) {
-//    NokeDevice nokeDevice = getNoke(macAddress);
-
-//    mNokeService.disconnectNoke(nokeDevice);
-
-    promise.resolve(null);
-  }
-
-  @ReactMethod
-  public void disconnectAll(Promise promise) {
+  public void disconnect(Promise promise) {
     mNokeService.disconnectNoke(currentNoke);
     mNokeService.stopScanning();
 

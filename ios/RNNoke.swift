@@ -262,6 +262,17 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         resolve(event)
     }
 
+    @objc func disconnect(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+        ) {
+        NokeDeviceManager.shared().disconnectNokeDevice(currentNoke!)
+        NokeDeviceManager.shared().stopScan()
+
+        resolve(nil)
+    }
+
+
     @objc func getDeviceInfo(
         _ resolve: RCTPromiseResolveBlock,
         rejecter reject: RCTPromiseRejectBlock
