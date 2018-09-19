@@ -12,9 +12,13 @@
     "padlock"
   ],
   "author": "Ant-Tech Ltd.",
-  "license": "",
+  "license": "Apache 2.0",
   "repository": "https://github.com/Ant-Tech-Agency/react-native-noke",
   "peerDependencies": {
     "react-native": "^0.41.2"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Ant-Tech-Agency/react-native-noke/issues"
+  },
+  "homepage": "https://github.com/Ant-Tech-Agency/react-native-noke"
 }
