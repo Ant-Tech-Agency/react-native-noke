@@ -347,10 +347,10 @@ public class RNNokeModule extends ReactContextBaseJavaModule {
     @Override
     public void onNokeDisconnected(NokeDevice noke) {
       emitDeviceEvent("onNokeDisconnected", createCommonEvents(noke));
-      mNokeService.stopScanning();
+      // mNokeService.stopScanning();
       lastEventCode = 5;
       flag = false;
-//      mNokeService.uploadData();
+      // mNokeService.uploadData();
     }
 
     @Override

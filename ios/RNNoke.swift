@@ -37,7 +37,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             sendEvent(withName: "onNokeUnlocked", body: body)
             break
         case .nokeDeviceConnectionStateDisconnected:
-            NokeDeviceManager.shared().stopScan()
+            // NokeDeviceManager.shared().stopScan()
             lastEventCode = 5
             sendEvent(withName: "onNokeDisconnected", body: createCommonEvents(noke: noke))
             break
