@@ -1,6 +1,8 @@
 
 # react-native-noke
 
+[![npm version](https://badge.fury.io/js/react-native-noke.svg)](https://badge.fury.io/js/react-native-noke)
+
 ## Getting started
 
 `$ npm install react-native-noke --save`
