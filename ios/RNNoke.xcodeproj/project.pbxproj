@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		847FF7962224E04300E8F852 /* RNNokeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FF7942224E04300E8F852 /* RNNokeError.swift */; };
+		847FF7972224E04300E8F852 /* NokeLibraryApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */; };
 		B3E7B58A1CC2AC0600A0062D /* RNNoke.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNNoke.m */; };
 		BD1ED8D9213E3E04001A0626 /* NokeHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */; };
 		BDD370DE2107689A00372169 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD370D72107689900372169 /* Reachability.swift */; };
@@ -31,6 +33,8 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNNoke.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNNoke.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		847FF7942224E04300E8F852 /* RNNokeError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNNokeError.swift; sourceTree = "<group>"; };
+		847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NokeLibraryApiClient.swift; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNNoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNNoke.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNNoke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNNoke.m; sourceTree = "<group>"; };
 		BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NokeHashMap.swift; sourceTree = "<group>"; };
@@ -67,6 +71,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */,
+				847FF7942224E04300E8F852 /* RNNokeError.swift */,
 				BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */,
 				BDD370E4210768C400372169 /* RNNoke-Bridging-Header.h */,
 				BDD370DA2107689A00372169 /* NokeDefines.swift */,
@@ -140,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				847FF7962224E04300E8F852 /* RNNokeError.swift in Sources */,
 				BDD370DE2107689A00372169 /* Reachability.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNNoke.m in Sources */,
 				BDD370E22107689A00372169 /* NokeDevice.swift in Sources */,
@@ -147,6 +154,7 @@
 				BDD370E12107689A00372169 /* NokeDeviceManager.swift in Sources */,
 				BDD370DF2107689A00372169 /* RNNoke.swift in Sources */,
 				BDD370E32107689A00372169 /* TI_aes_128.c in Sources */,
+				847FF7972224E04300E8F852 /* NokeLibraryApiClient.swift in Sources */,
 				BDD370E02107689A00372169 /* NokeDefines.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

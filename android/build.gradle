@@ -9,6 +9,8 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 26
@@ -36,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-//    compile 'com.noke.nokemobilelibrary:nokemobilelibrary:0.4.1'
-    implementation 'com.github.Ant-Tech-Agency:noke-mobile-library-android:4.0.1'
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.noke.nokemobilelibrary:nokemobilelibrary:0.6.5'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

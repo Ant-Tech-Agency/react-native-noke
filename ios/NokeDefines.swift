@@ -5,6 +5,7 @@
 //  Created by Spencer Apsley on 1/15/18.
 //  Copyright © 2018 Noke. All rights reserved.
 //
+
 import UIKit
 
 //Error codes for API, Go Library, and Noke Device
@@ -37,10 +38,28 @@ public enum NokeDeviceManagerError : Int {
     
     //Noke Mobile Library Errors
     case nokeLibraryErrorInvalidOfflineKey  = 301
+    case nokeLibraryErrorNoModeSet          = 302
 }
+
+public enum NokeLibraryMode : Int {
+    case SANDBOX      = 0;
+    case PRODUCTION   = 1;
+    case DEVELOP      = 2;
+    case OPEN         = 3;
+}
+
 
 //Defines used when interacting with the lock
 struct Constants {
+    
+    static let NOKE_DEVICE_IDENTIFIER_STRING = "NOKE"
+    
+    static let NOKE_HW_TYPE_1ST_GEN_PADLOCK         = "2P";
+    static let NOKE_HW_TYPE_2ND_GEN_PADLOCK         = "3P";
+    static let NOKE_HW_TYPE_ULOCK                   = "2U";
+    static let NOKE_HW_TYPE_HD_LOCK                 = "2I";
+    static let NOKE_HW_TYPE_DOOR_CONTROLLER         = "2E";
+    static let NOKE_HW_TYPE_PB12                    = "1C";
     
     //KEY LENGTHS
     static let AESKEYLEN =      16
@@ -88,6 +107,9 @@ struct Constants {
     static let SHUTDOWN_ResultType = 0x64
     static let INVALIDDATA_ResultType = 0x65
     static let BATTERYDATA_ResultType = 0x66
+    static let FAILEDTOLOCK_ResultType = 0x68
+    static let FAILEDTOUNLOCK_ResultType = 0x69
+    static let FAILEDTOUNSHACKLE_ResultType = 0x6A
     static let INVALID_ResultType = 0xFF
     
     //COMMUNICATION PACKET TYPES
@@ -138,3 +160,12 @@ struct Constants {
     static let OFFLINE_KEY_LENGTH =  32
     static let OFFLINE_COMMAND_LENGTH = 40
 }
+
+struct ApiURL {
+    static let sandboxUploadURL         = "https://coreapi-sandbox.appspot.com/"
+    static let productionUploadURL      = "https://coreapi-beta.appspot.com/"
+    static let developUploadURL         = "https://lock-api-dev.appspot.com/"
+    static let openString               = "OPEN"
+}
+
+

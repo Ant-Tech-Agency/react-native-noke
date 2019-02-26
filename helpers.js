@@ -12,8 +12,8 @@ export const createNokeOptions = options => ({
   body: options.body
 })
 
-export const addNokeDeviceOnce$ = (data) => Observable.create(observer => {
-  RNNoke.addNokeDeviceOnce(data)
+export const changeLock$ = (mac) => new Observable(observer => {
+  RNNoke.changeLock(mac)
   .then(data => {
     observer.next(data)
   })
@@ -21,6 +21,6 @@ export const addNokeDeviceOnce$ = (data) => Observable.create(observer => {
     observer.error(err)
   })
   .finally(() => {
-    observer.complete('done')
+    observer.complete()
   })
 })

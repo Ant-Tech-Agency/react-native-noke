@@ -18,90 +18,32 @@
 #import "React/RCTEventEmitter.h" // Required when used as a Pod in a Swift project
 #endif
 
-
-
 // Export a native module
 // https://facebook.github.io/react-native/docs/native-modules-ios.html#exporting-swift
 @interface RCT_EXTERN_MODULE(RNNoke, RCTEventEmitter)
 
 // Export methods to a native module
 // https://facebook.github.io/react-native/docs/native-modules-ios.html#exporting-swift
-
+RCT_EXTERN_METHOD(initService)
+RCT_EXTERN_METHOD(unlock: (NSArray)commands)
 RCT_EXTERN_METHOD(
-                  initiateNokeService:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  offlineUnlock:(NSDictionary) value
+                  unlockOffline: (NSString)key
+                  withCommand: (NSString)command
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
-
 RCT_EXTERN_METHOD(
-                  initiateNokeService: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  addNokeDevice:(NSDictionary) value
+                  changeLock: (NSString) mac
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
-
+RCT_EXTERN_METHOD(startScan)
+RCT_EXTERN_METHOD(stopScan)
+RCT_EXTERN_METHOD(disconnected)
 RCT_EXTERN_METHOD(
-                  addNokeDeviceOnce:(NSDictionary) value
-                  resolver:(RCTPromiseResolveBlock)resolve
+                  deviceInfo: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 
 
-RCT_EXTERN_METHOD(
-                  offlineUnlock:(NSDictionary) value
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  removeAllNokes:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  removeNokeDevice:(NSString) value
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  sendCommands:(NSDictionary) value
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  disconnect:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  startScan:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  stopScan:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  getDeviceInfo:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
-
-RCT_EXTERN_METHOD(
-                  setAPIKey:(NSString) value
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject
-                  )
 @end

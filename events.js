@@ -1,4 +1,3 @@
-import { debounce } from 'lodash'
 import {
   NativeEventEmitter,
   NativeModules
@@ -18,27 +17,12 @@ export const fromNokeEvents = () => {
     message: 'Missing rxjs'
   }
 
-  const events = [
-    'onServiceConnected',
-    'onNokeDiscovered',
-    'onNokeConnecting',
-    'onNokeConnected',
-    'onNokeSyncing',
-    'onNokeUnlocked',
-    'onNokeDisconnected',
-    'onBluetoothStatusChanged',
-    'onError'
-  ]
-
-  let lastEvent = ''
-
-  return Observable.create(observer => {
+  return new Observable(observer => {
     onEvent('onNokeDiscovered', data => {
       observer.next({
         name: 'onNokeDiscovered',
         data
       })
-      lastEvent = 'onNokeDiscovered'
     })
 
     onEvent('onNokeConnecting', data => {
@@ -46,17 +30,13 @@ export const fromNokeEvents = () => {
         name: 'onNokeConnecting',
         data
       })
-      lastEvent = 'onNokeConnecting'
     })
 
     onEvent('onNokeConnected', data => {
-      if(lastEvent !== 'onNokeUnlocked') {
-        observer.next({
-          name: 'onNokeConnected',
-          data
-        })
-        lastEvent = 'onNokeConnected'
-      }
+      observer.next({
+        name: 'onNokeConnected',
+        data
+      })
     })
 
     onEvent('onNokeSyncing', data => {
@@ -64,7 +44,6 @@ export const fromNokeEvents = () => {
         name: 'onNokeSyncing',
         data
       })
-      lastEvent = 'onNokeSyncing'
     })
 
     onEvent('onNokeUnlocked', data => {
@@ -72,7 +51,6 @@ export const fromNokeEvents = () => {
         name: 'onNokeUnlocked',
         data
       })
-      lastEvent = 'onNokeUnlocked'
     })
 
     onEvent('onNokeDisconnected', data => {
@@ -80,7 +58,6 @@ export const fromNokeEvents = () => {
         name: 'onNokeDisconnected',
         data
       })
-      lastEvent = 'onNokeDisconnected'
     })
 
     onEvent('onError', data => {
@@ -88,8 +65,27 @@ export const fromNokeEvents = () => {
         name: 'onError',
         data
       })
-      lastEvent = 'onError'
     })
 
+    onEvent('onBluetoothStatusChanged', data => {
+      observer.next({
+        name: 'onBluetoothStatusChanged',
+        data
+      })
+    })
+
+    onEvent('onDataUploaded', data => {
+      observer.next({
+        name: 'onDataUploaded',
+        data
+      })
+    })
+
+    onEvent('onNokeShutdown', data => {
+      observer.next({
+        name: 'onNokeShutdown',
+        data
+      })
+    })
   })
 }

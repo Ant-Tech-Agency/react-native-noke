@@ -5,6 +5,7 @@
 //  Created by Spencer Apsley on 1/30/18.
 //  Copyright © 2018 Noke. All rights reserved.
 //
+
 import Foundation
 import SystemConfiguration
 

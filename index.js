@@ -2,37 +2,21 @@ import {
   NativeEventEmitter,
   NativeModules
 } from 'react-native'
-import {
-  fromNokeEvents,
-  onEvent
-} from './events'
-import {
-  addNokeDeviceOnce$,
-  createNokeOptions
-} from './helpers'
+import { changeLock$, createNokeOptions } from './helpers'
+import { fromNokeEvents } from './events'
 
 const { RNNoke } = NativeModules
 
 export default {
-  initiateNokeService: RNNoke.initiateNokeService,
-  on: onEvent,
-  offlineUnlock: RNNoke.offlineUnlock,
-  sendCommands: RNNoke.sendCommands,
-  addNokeDevice(data) {
-    return RNNoke.addNokeDevice(data)
-  },
-  removeAllNokes: RNNoke.removeAllNokes,
-  removeNokeDevice: RNNoke.removeNokeDevice,
+  initService: RNNoke.initService,
+  changeLock: RNNoke.changeLock,
+  deviceInfo: RNNoke.deviceInfo,
+  disconnect: RNNoke.disconnect,
   startScan: RNNoke.startScan,
   stopScan: RNNoke.stopScan,
-  disconnect: RNNoke.disconnect,
-  getDeviceInfo: RNNoke.getDeviceInfo,
-  setOfflineData: RNNoke.setOfflineData,
-  addNokeDeviceOnce: RNNoke.addNokeDeviceOnce,
-  setAPIKey: RNNoke.setAPIKey,
-  fromNokeEvents,
-  addNokeDeviceOnce$,
+  unlock: RNNoke.unlock,
+  unlockOffline: RNNoke.unlockOffline,
+  changeLock$,
   createNokeOptions,
-
-  AUTHOR: RNNoke.AUTHOR
+  fromNokeEvents
 }
