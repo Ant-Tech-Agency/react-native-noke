@@ -10,7 +10,6 @@
 		847FF7962224E04300E8F852 /* RNNokeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FF7942224E04300E8F852 /* RNNokeError.swift */; };
 		847FF7972224E04300E8F852 /* NokeLibraryApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */; };
 		B3E7B58A1CC2AC0600A0062D /* RNNoke.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNNoke.m */; };
-		BD1ED8D9213E3E04001A0626 /* NokeHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */; };
 		BDD370DE2107689A00372169 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD370D72107689900372169 /* Reachability.swift */; };
 		BDD370DF2107689A00372169 /* RNNoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD370D82107689900372169 /* RNNoke.swift */; };
 		BDD370E02107689A00372169 /* NokeDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD370DA2107689A00372169 /* NokeDefines.swift */; };
@@ -37,7 +36,6 @@
 		847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NokeLibraryApiClient.swift; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNNoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNNoke.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNNoke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNNoke.m; sourceTree = "<group>"; };
-		BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NokeHashMap.swift; sourceTree = "<group>"; };
 		BDD370D52107689900372169 /* RNNoke.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RNNoke.podspec; sourceTree = "<group>"; };
 		BDD370D62107689900372169 /* TI_aes_128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TI_aes_128.h; sourceTree = "<group>"; };
 		BDD370D72107689900372169 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -73,7 +71,6 @@
 			children = (
 				847FF7952224E04300E8F852 /* NokeLibraryApiClient.swift */,
 				847FF7942224E04300E8F852 /* RNNokeError.swift */,
-				BD1ED8D8213E3E04001A0626 /* NokeHashMap.swift */,
 				BDD370E4210768C400372169 /* RNNoke-Bridging-Header.h */,
 				BDD370DA2107689A00372169 /* NokeDefines.swift */,
 				BDD370DC2107689A00372169 /* NokeDevice.swift */,
@@ -150,7 +147,6 @@
 				BDD370DE2107689A00372169 /* Reachability.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNNoke.m in Sources */,
 				BDD370E22107689A00372169 /* NokeDevice.swift in Sources */,
-				BD1ED8D9213E3E04001A0626 /* NokeHashMap.swift in Sources */,
 				BDD370E12107689A00372169 /* NokeDeviceManager.swift in Sources */,
 				BDD370DF2107689A00372169 /* RNNoke.swift in Sources */,
 				BDD370E32107689A00372169 /* TI_aes_128.c in Sources */,

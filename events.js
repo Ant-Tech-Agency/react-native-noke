@@ -12,6 +12,8 @@ export const addListener = function (eventName, callback) {
   return this
 }
 
+export const removeAllListeners = NokeEmitter.removeAllListeners
+
 export const fromNokeEvents = () => {
   if (!Observable) return {
     message: 'Missing rxjs'

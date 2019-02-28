@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native'
 import { changeLock$, createOptions, fetchNokeData } from './helpers'
-import { fromNokeEvents, addListener } from './events'
+import { fromNokeEvents, addListener, removeAllListeners } from './events'
 import { constants } from './constants'
 
 const { RNNoke } = NativeModules
@@ -21,6 +21,7 @@ export default {
 
   fromNokeEvents,
   addListener,
+  removeAllListeners,
 
   CONSTANTS: constants
 }
