@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable'
 import RNNoke from './index'
 
-export const createNokeOptions = options => ({
+export const createOptions = options => ({
   url: `https://v1.api.nokepro.com/lock/${options.url}`,
   method: 'POST',
   headers: {
@@ -11,6 +11,8 @@ export const createNokeOptions = options => ({
   },
   body: options.body
 })
+
+export const fetchNokeData = options => Observable.ajax(createOptions(options))
 
 export const changeLock$ = (mac) => new Observable(observer => {
   RNNoke.changeLock(mac)

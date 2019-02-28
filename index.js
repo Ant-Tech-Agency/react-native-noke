@@ -1,9 +1,7 @@
-import {
-  NativeEventEmitter,
-  NativeModules
-} from 'react-native'
-import { changeLock$, createNokeOptions } from './helpers'
-import { fromNokeEvents } from './events'
+import { NativeModules } from 'react-native'
+import { changeLock$, createOptions, fetchNokeData } from './helpers'
+import { fromNokeEvents, addListener } from './events'
+import { constants } from './constants'
 
 const { RNNoke } = NativeModules
 
@@ -16,7 +14,13 @@ export default {
   stopScan: RNNoke.stopScan,
   unlock: RNNoke.unlock,
   unlockOffline: RNNoke.unlockOffline,
+
   changeLock$,
-  createNokeOptions,
-  fromNokeEvents
+  createOptions,
+  fetchNokeData,
+
+  fromNokeEvents,
+  addListener,
+
+  CONSTANTS: constants
 }

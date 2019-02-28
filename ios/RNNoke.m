@@ -25,15 +25,18 @@
 // Export methods to a native module
 // https://facebook.github.io/react-native/docs/native-modules-ios.html#exporting-swift
 RCT_EXTERN_METHOD(initService)
-RCT_EXTERN_METHOD(unlock: (NSArray)commands)
-RCT_EXTERN_METHOD(
-                  unlockOffline: (NSString)key
-                  withCommand: (NSString)command
+RCT_EXTERN_METHOD(unlock:(NSArray)commands
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 RCT_EXTERN_METHOD(
-                  changeLock: (NSString) mac
+                  unlockOffline:(NSString)key
+                  withCommand:(NSString)command
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
+RCT_EXTERN_METHOD(
+                  changeLock:(NSString)mac
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
@@ -41,7 +44,7 @@ RCT_EXTERN_METHOD(startScan)
 RCT_EXTERN_METHOD(stopScan)
 RCT_EXTERN_METHOD(disconnected)
 RCT_EXTERN_METHOD(
-                  deviceInfo: (RCTPromiseResolveBlock)resolve
+                  deviceInfo:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 

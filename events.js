@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable'
 const { RNNoke } = NativeModules
 const NokeEmitter = new NativeEventEmitter(RNNoke)
 
-export const onEvent = function (eventName, callback) {
+export const addListener = function (eventName, callback) {
   NokeEmitter.addListener(eventName, callback)
   return this
 }
@@ -18,70 +18,70 @@ export const fromNokeEvents = () => {
   }
 
   return new Observable(observer => {
-    onEvent('onNokeDiscovered', data => {
+    addListener('onNokeDiscovered', data => {
       observer.next({
         name: 'onNokeDiscovered',
         data
       })
     })
 
-    onEvent('onNokeConnecting', data => {
+    addListener('onNokeConnecting', data => {
       observer.next({
         name: 'onNokeConnecting',
         data
       })
     })
 
-    onEvent('onNokeConnected', data => {
+    addListener('onNokeConnected', data => {
       observer.next({
         name: 'onNokeConnected',
         data
       })
     })
 
-    onEvent('onNokeSyncing', data => {
+    addListener('onNokeSyncing', data => {
       observer.next({
         name: 'onNokeSyncing',
         data
       })
     })
 
-    onEvent('onNokeUnlocked', data => {
+    addListener('onNokeUnlocked', data => {
       observer.next({
         name: 'onNokeUnlocked',
         data
       })
     })
 
-    onEvent('onNokeDisconnected', data => {
+    addListener('onNokeDisconnected', data => {
       observer.next({
         name: 'onNokeDisconnected',
         data
       })
     })
 
-    onEvent('onError', data => {
+    addListener('onError', data => {
       observer.next({
         name: 'onError',
         data
       })
     })
 
-    onEvent('onBluetoothStatusChanged', data => {
+    addListener('onBluetoothStatusChanged', data => {
       observer.next({
         name: 'onBluetoothStatusChanged',
         data
       })
     })
 
-    onEvent('onDataUploaded', data => {
+    addListener('onDataUploaded', data => {
       observer.next({
         name: 'onDataUploaded',
         data
       })
     })
 
-    onEvent('onNokeShutdown', data => {
+    addListener('onNokeShutdown', data => {
       observer.next({
         name: 'onNokeShutdown',
         data
