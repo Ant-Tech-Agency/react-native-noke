@@ -40,6 +40,8 @@ RCT_EXTERN_METHOD(
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
+
+RCT_EXTERN_METHOD(removeAllLock)
 RCT_EXTERN_METHOD(startScan)
 RCT_EXTERN_METHOD(stopScan)
 RCT_EXTERN_METHOD(disconnected)

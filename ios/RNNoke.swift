@@ -35,6 +35,7 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
             isConnected = false
             NokeDeviceManager.shared().startScanForNokeDevices()
             sendEvent(withName: "onNokeDisconnected", body: nokeDeviceInfo(noke))
+            removeAllLock()
             break
         }
     }
@@ -136,7 +137,13 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         NokeDeviceManager.shared().removeAllNoke()
         NokeDeviceManager.shared().addNoke(noke!)
         currentNoke = noke
+        isConnected = false
         resolve(nokeDeviceInfo(noke))
+    }
+    
+    @objc func removeAllLock() {
+        NokeDeviceManager.shared().removeAllNoke()
+        NokeDeviceManager.shared().stopScan()
     }
     
     @objc func startScan() {

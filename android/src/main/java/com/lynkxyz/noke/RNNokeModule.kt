@@ -7,7 +7,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.noke.nokemobilelibrary.*
@@ -52,6 +54,7 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
             ))
         }
     }
+
 
     private val mNokeServiceListener = object : NokeServiceListener {
         override fun onNokeDiscovered(noke: NokeDevice) {
@@ -109,21 +112,7 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
 
         }
 
-        override fun onError(noke: NokeDevice, error: Int, message: String) {
-
-//            when (error) {
-//                NokeMobileError.ERROR_LOCATION_PERMISSIONS_NEEDED -> {
-//                }
-//                NokeMobileError.ERROR_LOCATION_SERVICES_DISABLED -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                }
-//                NokeMobileError.ERROR_BLUETOOTH_DISABLED -> {
-//                }
-//                NokeMobileError.ERROR_BLUETOOTH_GATT -> {
-//                }
-//                NokeMobileError.DEVICE_ERROR_INVALID_KEY -> {
-//                }
-//            }
-
+        override fun onError(noke: NokeDevice?, error: Int, message: String) {
             emitDeviceEvent("onError", writableMapOf(
                     "noke" to nokeDeviceInfo(noke),
                     "message" to message,
@@ -207,6 +196,12 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     }
 
     @ReactMethod
+    fun removeAllLock() {
+        mNokeService!!.removeAllNoke()
+        mNokeService!!.stopScanning()
+    }
+
+    @ReactMethod
     fun startScan() {
         mNokeService!!.startScanningForNokeDevices()
     }
@@ -233,23 +228,23 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     }
 
     private fun nokeDeviceInfo(noke: NokeDevice?): WritableMap {
-        if (noke == null) {
-            return writableMapOf()
+        return if (noke == null) {
+            writableMapOf()
         } else {
-            return writableMapOf(
+            writableMapOf(
                     "battery" to noke.battery?.toString(),
                     "connectionState" to noke.connectionState.toString(),
                     "offlineKey" to noke.offlineKey,
-//                    "hardwareVersion" to noke.hardwareVersion?.toString(),
                     "lastSeen" to noke.lastSeen.toString(),
                     "lockState" to noke.lockState.toString(),
                     "mac" to noke.mac,
                     "name" to noke.name,
                     "serial" to noke.serial,
                     "session" to noke.session,
-//                    "softwareVersion" to noke.softwareVersion?.toString(),
                     "trackingKey" to noke.trackingKey?.toString(),
                     "version" to noke.version
+//                    "hardwareVersion" to noke.hardwareVersion?.toString(),
+//                    "softwareVersion" to noke.softwareVersion?.toString(),
             )
         }
     }
