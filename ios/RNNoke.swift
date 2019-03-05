@@ -41,6 +41,8 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     }
     
     func nokeDeviceDidShutdown(noke: NokeDevice, isLocked: Bool, didTimeout: Bool) {
+        isConnected = false
+        NokeDeviceManager.shared().disconnectNokeDevice(noke)
         sendEvent(withName: "onNokeShutdown", body: [
             "noke": nokeDeviceInfo(noke),
             "isLocked": isLocked,
@@ -49,11 +51,13 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
     }
     
     func nokeErrorDidOccur(error: NokeDeviceManagerError, message: String, noke: NokeDevice?) {
-        sendEvent(withName: "onError", body: [
-            "noke": nokeDeviceInfo(noke),
-            "message": message,
-            "error": error.rawValue
-            ])
+        if error != .nokeAPIErrorAPIKey {
+            sendEvent(withName: "onError", body: [
+                "noke": nokeDeviceInfo(noke),
+                "message": message,
+                "error": error.rawValue
+                ])
+        }
     }
     
     func didUploadData(result: Int, message: String) {
@@ -132,12 +136,12 @@ class RNNoke : RCTEventEmitter, NokeDeviceManagerDelegate {
         let noke = NokeDevice(name: mac, mac: mac)
         if currentNoke != nil {
             NokeDeviceManager.shared().disconnectNokeDevice(noke!)
-            NokeDeviceManager.shared().startScanForNokeDevices()
         }
+        isConnected = false
         NokeDeviceManager.shared().removeAllNoke()
         NokeDeviceManager.shared().addNoke(noke!)
+        NokeDeviceManager.shared().startScanForNokeDevices()
         currentNoke = noke
-        isConnected = false
         resolve(nokeDeviceInfo(noke))
     }
     

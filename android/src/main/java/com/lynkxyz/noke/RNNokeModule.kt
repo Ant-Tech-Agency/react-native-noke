@@ -17,6 +17,7 @@ import com.noke.nokemobilelibrary.*
 class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
     private var mNokeService: NokeDeviceManagerService? = null
     private var currentNoke: NokeDevice? = null
+    private var isConnected = false
 
     init {
         Companion.reactContext = reactContext
@@ -58,9 +59,12 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
 
     private val mNokeServiceListener = object : NokeServiceListener {
         override fun onNokeDiscovered(noke: NokeDevice) {
-            currentNoke = noke
-            mNokeService!!.connectToNoke(currentNoke)
-            emitDeviceEvent("onNokeDiscovered", nokeDeviceInfo(noke))
+            if(!isConnected) {
+                currentNoke = noke
+                mNokeService!!.connectToNoke(currentNoke)
+                emitDeviceEvent("onNokeDiscovered", nokeDeviceInfo(noke))
+                isConnected = true
+            }
         }
 
         override fun onNokeConnecting(noke: NokeDevice) {
@@ -82,6 +86,7 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
         }
 
         override fun onNokeShutdown(noke: NokeDevice, isLocked: Boolean?, didTimeout: Boolean?) {
+            isConnected = false
             emitDeviceEvent("onNokeShutdown", writableMapOf(
                     "noke" to nokeDeviceInfo(noke),
                     "isLocked" to isLocked,
@@ -90,6 +95,7 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
         }
 
         override fun onNokeDisconnected(noke: NokeDevice) {
+            isConnected = false
             mNokeService!!.startScanningForNokeDevices()
             mNokeService!!.setBluetoothScanDuration(8000)
             emitDeviceEvent("onNokeDisconnected", nokeDeviceInfo(noke))
@@ -153,33 +159,41 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
 
     @ReactMethod
     fun unlock(commands: ReadableArray, promise: Promise) {
-        if (currentNoke == null) {
-            promise.reject(RNNokeError.NO_LOCK_CONNECTED, RNNokeError.NO_LOCK_CONNECTED_MESSAGE)
-            return
-        } else {
-            for (i in 0 until commands.size()) {
-                currentNoke!!.sendCommands(commands.getString(i))
+        try {
+            if (currentNoke == null) {
+                promise.reject(RNNokeError.NO_LOCK_CONNECTED, RNNokeError.NO_LOCK_CONNECTED_MESSAGE)
+                return
+            } else {
+                for (i in 0 until commands.size()) {
+                    currentNoke!!.sendCommands(commands.getString(i))
+                }
+                promise.resolve(nokeDeviceInfo(currentNoke))
             }
-            promise.resolve(nokeDeviceInfo(currentNoke))
+        } catch (e: Throwable) {
+            print(e.message)
         }
     }
 
     @ReactMethod
     fun unlockOffline(key: String, command: String, promise: Promise) {
-        if (currentNoke == null) {
-            promise.reject(RNNokeError.NO_LOCK_CONNECTED, RNNokeError.NO_LOCK_CONNECTED_MESSAGE)
-            return
-        }
+        try {
+            if (currentNoke == null) {
+                promise.reject(RNNokeError.NO_LOCK_CONNECTED, RNNokeError.NO_LOCK_CONNECTED_MESSAGE)
+                return
+            }
 
-        if (currentNoke!!.session == null) {
-            promise.reject(RNNokeError.NO_LOCK_SESSION, RNNokeError.NO_LOCK_SESSION_MESSAGE)
-            return
-        }
+            if (currentNoke!!.session == null) {
+                promise.reject(RNNokeError.NO_LOCK_SESSION, RNNokeError.NO_LOCK_SESSION_MESSAGE)
+                return
+            }
 
-        currentNoke!!.offlineKey = key
-        currentNoke!!.offlineUnlockCmd = command
-        currentNoke!!.offlineUnlock()
-        promise.resolve(nokeDeviceInfo(currentNoke))
+            currentNoke!!.offlineKey = key
+            currentNoke!!.offlineUnlockCmd = command
+            currentNoke!!.offlineUnlock()
+            promise.resolve(nokeDeviceInfo(currentNoke))
+        } catch (e: Throwable) {
+            print(e.message)
+        }
     }
 
     @ReactMethod
@@ -187,16 +201,18 @@ class RNNokeModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
         val noke = NokeDevice(mac, mac)
         if (currentNoke != null) {
             mNokeService!!.disconnectNoke(this.currentNoke!!)
-            mNokeService!!.startScanningForNokeDevices()
         }
+        isConnected = false
         mNokeService!!.removeAllNoke()
         mNokeService!!.addNokeDevice(noke)
+        mNokeService!!.startScanningForNokeDevices()
         currentNoke = noke
         promise.resolve(nokeDeviceInfo(noke))
     }
 
     @ReactMethod
     fun removeAllLock() {
+        isConnected = false
         mNokeService!!.removeAllNoke()
         mNokeService!!.stopScanning()
     }
