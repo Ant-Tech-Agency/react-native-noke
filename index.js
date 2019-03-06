@@ -14,6 +14,7 @@ export default {
   stopScan: RNNoke.stopScan,
   unlock: RNNoke.unlock,
   unlockOffline: RNNoke.unlockOffline,
+  removeAllLock: RNNoke.removeAllLock,
 
   changeLock$,
   createOptions,
