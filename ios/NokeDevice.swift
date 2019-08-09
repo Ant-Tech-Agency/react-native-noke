@@ -278,7 +278,7 @@ public class NokeDevice: NSObject, NSCoding, CBPeripheralDelegate{
                 let startIndex = deviceName.index(deviceName.startIndex, offsetBy: 4)
                 let endIndex = deviceName.index(startIndex, offsetBy:2)
                 let hardwareVersion = String(deviceName[startIndex..<endIndex])
-                self.version = String(format: "%@-%d.%d", hardwareVersion!,majorVersion,minorVersion)
+                self.version = String(format: "%@-%d.%d", hardwareVersion,majorVersion,minorVersion)
             }
         }
     }
