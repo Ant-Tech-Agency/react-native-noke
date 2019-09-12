@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.lynkxyz.noke">
+    <application>
+        <service android:name="com.noke.nokemobilelibrary.NokeDeviceManagerService" android:enabled="true"/>
+    </application>
+</manifest>
