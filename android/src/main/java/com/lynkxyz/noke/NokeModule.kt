@@ -17,6 +17,7 @@ import com.noke.nokemobilelibrary.NokeServiceListener
 class NokeModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
     private var mNokeService: NokeDeviceManagerService? = null
     private var currentNoke: NokeDevice? = null
+    private var isConnected = false
 
     private fun emitDeviceEvent(eventName: String, eventData: WritableMap?) {
         // A method for emitting from the native side to JS
@@ -79,6 +80,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
         if (currentNoke != null) {
             mNokeService!!.disconnectNoke(this.currentNoke!!)
         }
+        isConnected = false
         mNokeService!!.removeAllNoke()
         mNokeService!!.addNokeDevice(noke)
         mNokeService!!.startScanningForNokeDevices()
@@ -88,6 +90,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
 
     @ReactMethod
     fun removeAll() {
+        isConnected = false
         mNokeService!!.removeAllNoke()
         mNokeService!!.stopScanning()
     }
@@ -103,7 +106,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
     }
 
     @ReactMethod
-    fun disconnect() {
+    fun disconnectCurrent() {
         if (currentNoke != null) {
             mNokeService!!.disconnectNoke(currentNoke)
         }
@@ -130,7 +133,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             //Start bluetooth scanning
             mNokeService!!.startScanningForNokeDevices()
 
-            emitDeviceEvent("onServiceConnected", writableMapOf(
+            emitDeviceEvent("serviceConnected", writableMapOf(
                     "connected" to mNokeService!!.initialize()
             ))
         }
@@ -138,7 +141,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
         override fun onServiceDisconnected(classname: ComponentName) {
             mNokeService = null
 
-            emitDeviceEvent("onServiceDisconnected", writableMapOf(
+            emitDeviceEvent("serviceDisconnected", writableMapOf(
                     "connected" to false
             ))
         }
@@ -146,19 +149,22 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
 
     private val mNokeServiceListener = object : NokeServiceListener {
         override fun onNokeDiscovered(noke: NokeDevice) {
-            currentNoke = noke
-            mNokeService!!.connectToNoke(currentNoke)
-            emitDeviceEvent("onNokeDiscovered", nokeDeviceInfoFactory(noke))
+            if(!isConnected) {
+                currentNoke = noke
+                mNokeService!!.connectToNoke(currentNoke)
+                emitDeviceEvent("discovered", nokeDeviceInfoFactory(noke))
+                isConnected = true
+            }
         }
 
         override fun onNokeConnecting(noke: NokeDevice) {
-            emitDeviceEvent("onNokeConnecting", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("connecting", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeConnected(noke: NokeDevice) {
             currentNoke = noke
             mNokeService!!.stopScanning()
-            emitDeviceEvent("onNokeConnected", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("connected", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeSyncing(noke: NokeDevice) {
@@ -166,11 +172,12 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
         }
 
         override fun onNokeUnlocked(noke: NokeDevice) {
-            emitDeviceEvent("onNokeUnlocked", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("unlocked", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeShutdown(noke: NokeDevice, isLocked: Boolean?, didTimeout: Boolean?) {
-            emitDeviceEvent("onNokeShutdown", writableMapOf(
+            isConnected = false
+            emitDeviceEvent("shutdown", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke),
                     "isLocked" to isLocked,
                     "didTimeout" to didTimeout
@@ -178,17 +185,18 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
         }
 
         override fun onNokeDisconnected(noke: NokeDevice) {
+            isConnected = false
             currentNoke = null
             //mNokeService.uploadData();
             mNokeService!!.startScanningForNokeDevices()
             mNokeService!!.setBluetoothScanDuration(8000)
-            emitDeviceEvent("onNokeDisconnected", writableMapOf(
+            emitDeviceEvent("disconnected", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke)
             ))
         }
 
         override fun onDataUploaded(result: Int, message: String) {
-            emitDeviceEvent("onDataUploaded", writableMapOf(
+            emitDeviceEvent("uploaded", writableMapOf(
                     "result" to result,
                     "message" to message
             ))
@@ -198,13 +206,13 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             when (bluetoothStatus) {
                 BluetoothAdapter.STATE_ON -> startScan()
             }
-            emitDeviceEvent("onBluetoothStatusChanged", writableMapOf(
+            emitDeviceEvent("bluetoothStatusChanged", writableMapOf(
                     "status" to bluetoothStatus
             ))
         }
 
         override fun onError(noke: NokeDevice, error: Int, message: String) {
-            emitDeviceEvent("onError", writableMapOf(
+            emitDeviceEvent("error", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke),
                     "message" to message,
                     "error" to error
