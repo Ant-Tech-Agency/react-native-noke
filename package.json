@@ -1,12 +1,9 @@
 {
   "name": "react-native-noke",
   "title": "React Native Noke",
-  "version": "1.0.0",
-  "description": "TODO",
+  "version": "0.0.1",
+  "description": "Noke SDK for React Native",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/github_account/react-native-noke.git",
@@ -16,8 +13,8 @@
     "react-native"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "yourname@email.com"
+    "name": "lynkxyz",
+    "email": "lynkxyz@gmail.com"
   },
   "license": "MIT",
   "licenseFilename": "LICENSE",
