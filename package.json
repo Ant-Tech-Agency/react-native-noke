@@ -11,7 +11,7 @@
     "baseUrl": "https://github.com/github_account/react-native-noke"
   },
   "scripts": {
-    "install": "yarn build",
+    "install": "rm -rf ./lib/* && tsc",
     "build": "rm -rf ./lib/* && yarn lint && tsc",
     "prepublish": "yarn build",
     "lint": "tslint 'src/**/*.ts?(x)'",
