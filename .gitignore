@@ -30,7 +30,6 @@ project.xcworkspace
 
 # Android/IntelliJ
 #
-build/
 .idea
 .gradle
 local.properties
@@ -40,3 +39,5 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
+lib
+yarn.lock
