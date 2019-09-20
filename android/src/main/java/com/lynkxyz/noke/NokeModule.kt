@@ -133,7 +133,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             //Start bluetooth scanning
             mNokeService!!.startScanningForNokeDevices()
 
-            emitDeviceEvent("serviceConnected", writableMapOf(
+            emitDeviceEvent("ServiceConnected", writableMapOf(
                     "connected" to mNokeService!!.initialize()
             ))
         }
@@ -141,7 +141,7 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
         override fun onServiceDisconnected(classname: ComponentName) {
             mNokeService = null
 
-            emitDeviceEvent("serviceDisconnected", writableMapOf(
+            emitDeviceEvent("ServiceDisconnected", writableMapOf(
                     "connected" to false
             ))
         }
@@ -152,32 +152,32 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             if(!isConnected) {
                 currentNoke = noke
                 mNokeService!!.connectToNoke(currentNoke)
-                emitDeviceEvent("discovered", nokeDeviceInfoFactory(noke))
+                emitDeviceEvent("Discovered", nokeDeviceInfoFactory(noke))
                 isConnected = true
             }
         }
 
         override fun onNokeConnecting(noke: NokeDevice) {
-            emitDeviceEvent("connecting", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("Connecting", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeConnected(noke: NokeDevice) {
             currentNoke = noke
             mNokeService!!.stopScanning()
-            emitDeviceEvent("connected", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("Connected", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeSyncing(noke: NokeDevice) {
-            emitDeviceEvent("onNokeSyncing", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("Syncing", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeUnlocked(noke: NokeDevice) {
-            emitDeviceEvent("unlocked", nokeDeviceInfoFactory(noke))
+            emitDeviceEvent("Unlocked", nokeDeviceInfoFactory(noke))
         }
 
         override fun onNokeShutdown(noke: NokeDevice, isLocked: Boolean?, didTimeout: Boolean?) {
             isConnected = false
-            emitDeviceEvent("shutdown", writableMapOf(
+            emitDeviceEvent("Shutdown", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke),
                     "isLocked" to isLocked,
                     "didTimeout" to didTimeout
@@ -190,13 +190,13 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             //mNokeService.uploadData();
             mNokeService!!.startScanningForNokeDevices()
             mNokeService!!.setBluetoothScanDuration(8000)
-            emitDeviceEvent("disconnected", writableMapOf(
+            emitDeviceEvent("Disconnected", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke)
             ))
         }
 
         override fun onDataUploaded(result: Int, message: String) {
-            emitDeviceEvent("uploaded", writableMapOf(
+            emitDeviceEvent("Uploaded", writableMapOf(
                     "result" to result,
                     "message" to message
             ))
@@ -206,13 +206,13 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
             when (bluetoothStatus) {
                 BluetoothAdapter.STATE_ON -> startScan()
             }
-            emitDeviceEvent("bluetoothStatusChanged", writableMapOf(
+            emitDeviceEvent("BluetoothStatusChanged", writableMapOf(
                     "status" to bluetoothStatus
             ))
         }
 
-        override fun onError(noke: NokeDevice, error: Int, message: String) {
-            emitDeviceEvent("error", writableMapOf(
+        override fun onError(noke: NokeDevice?, error: Int, message: String) {
+            emitDeviceEvent("Error", writableMapOf(
                     "noke" to nokeDeviceInfoFactory(noke),
                     "message" to message,
                     "error" to error
