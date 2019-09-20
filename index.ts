@@ -49,11 +49,7 @@ type NokeEventData = {
 
 const RNNoke: INoke = Noke
 
-export function addListener(eventName: NokeEvent, cb: () => void) {
-  NokeEmitter.addListener(eventName, cb)
-}
-
-export function fromEvent(cb: (data: NokeEventData) => void) {
+function fromEvent(cb: (data: NokeEventData) => void) {
   NokeEmitter.addListener(NokeEvent.Discovered, cb)
   NokeEmitter.addListener(NokeEvent.Connecting, cb)
   NokeEmitter.addListener(NokeEvent.Connected, cb)
@@ -66,6 +62,15 @@ export function fromEvent(cb: (data: NokeEventData) => void) {
   NokeEmitter.addListener(NokeEvent.Shutdown, cb)
 }
 
-export const removeAllListeners = NokeEmitter.removeAllListeners
+const removeAllListeners = NokeEmitter.removeAllListeners
 
-export default RNNoke
+function addListener(eventName: NokeEvent, cb: () => void) {
+  NokeEmitter.addListener(eventName, cb)
+}
+
+export default {
+  ...RNNoke,
+  fromEvent,
+  addListener,
+  removeAllListeners
+}
