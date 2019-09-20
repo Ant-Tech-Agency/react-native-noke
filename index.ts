@@ -14,6 +14,8 @@ export enum NokeEvent {
   Uploaded = 'Uploaded',
   BluetoothStatusChanged = 'BluetoothStatusChanged',
   Error = 'Error',
+  ServiceConnected = 'ServiceConnected',
+  ServiceDisconnected = 'ServiceDisconnected'
 }
 
 type NokeDevice = {
@@ -50,16 +52,20 @@ type NokeEventData = {
 const RNNoke: INoke = Noke
 
 function fromEvent(cb: (data: NokeEventData) => void) {
-  NokeEmitter.addListener(NokeEvent.Discovered, cb)
-  NokeEmitter.addListener(NokeEvent.Connecting, cb)
-  NokeEmitter.addListener(NokeEvent.Connected, cb)
-  NokeEmitter.addListener(NokeEvent.Syncing, cb)
-  NokeEmitter.addListener(NokeEvent.Unlocked, cb)
-  NokeEmitter.addListener(NokeEvent.Disconnected, cb)
-  NokeEmitter.addListener(NokeEvent.Error, cb)
-  NokeEmitter.addListener(NokeEvent.BluetoothStatusChanged, cb)
-  NokeEmitter.addListener(NokeEvent.Uploaded, cb)
-  NokeEmitter.addListener(NokeEvent.Shutdown, cb)
+  const fn = (eventName: NokeEvent) => (info: NokeEventData) => ({eventName, info})
+
+  NokeEmitter.addListener(NokeEvent.Discovered, fn(NokeEvent.Discovered))
+  NokeEmitter.addListener(NokeEvent.Connecting, fn(NokeEvent.Connecting))
+  NokeEmitter.addListener(NokeEvent.Connected, fn(NokeEvent.Connected))
+  NokeEmitter.addListener(NokeEvent.Syncing, fn(NokeEvent.Syncing))
+  NokeEmitter.addListener(NokeEvent.Unlocked, fn(NokeEvent.Unlocked))
+  NokeEmitter.addListener(NokeEvent.Disconnected, fn(NokeEvent.Disconnected))
+  NokeEmitter.addListener(NokeEvent.Error, fn(NokeEvent.Error))
+  NokeEmitter.addListener(NokeEvent.BluetoothStatusChanged, fn(NokeEvent.BluetoothStatusChanged))
+  NokeEmitter.addListener(NokeEvent.Uploaded, fn(NokeEvent.Uploaded))
+  NokeEmitter.addListener(NokeEvent.Shutdown, fn(NokeEvent.Shutdown))
+  NokeEmitter.addListener(NokeEvent.ServiceConnected, fn(NokeEvent.ServiceConnected))
+  NokeEmitter.addListener(NokeEvent.ServiceDisconnected, fn(NokeEvent.ServiceDisconnected))
 }
 
 const removeAllListeners = NokeEmitter.removeAllListeners
