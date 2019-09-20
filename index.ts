@@ -52,7 +52,7 @@ type NokeEventData = {
 const RNNoke: INoke = Noke
 
 function fromEvent(cb: (data: NokeEventData) => void) {
-  const fn = (eventName: NokeEvent) => (info: NokeEventData) => ({eventName, info})
+  const fn = (eventName: NokeEvent) => (info: NokeDevice) => cb({eventName, info})
 
   NokeEmitter.addListener(NokeEvent.Discovered, fn(NokeEvent.Discovered))
   NokeEmitter.addListener(NokeEvent.Connecting, fn(NokeEvent.Connecting))
