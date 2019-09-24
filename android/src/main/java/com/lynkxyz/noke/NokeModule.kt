@@ -30,6 +30,15 @@ class NokeModule(private val reactContext: ReactApplicationContext) : ReactConte
     }
 
     @ReactMethod
+    private fun isInitialized(promise: Promise) {
+        if (mNokeService != null) {
+            promise.resolve(true)
+        } else {
+            promise.resolve(false)
+        }
+    }
+
+    @ReactMethod
     private fun initService() {
         val nokeServiceIntent = Intent(reactContext, NokeDeviceManagerService::class.java)
         reactContext.bindService(nokeServiceIntent, mServiceConnection, BIND_AUTO_CREATE)

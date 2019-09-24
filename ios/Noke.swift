@@ -12,6 +12,7 @@ import NokeMobileLibrary
 class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
     var currentNoke: NokeDevice?
     var isConnected = false
+    var isInitializedService = false
     
     func nokeDeviceDidUpdateState(to state: NokeDeviceConnectionState, noke: NokeDevice) {
         switch state {
@@ -19,28 +20,28 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
             if(isConnected == false) {
                 currentNoke = noke
                 NokeDeviceManager.shared().connectToNokeDevice(noke)
-                sendEvent(withName: "discovered", body: nokeDeviceInfoFactory(noke))
+                sendEvent(withName: "Discovered", body: nokeDeviceInfoFactory(noke))
                 isConnected = true
             }
             break
         case .Connecting:
-            sendEvent(withName: "connecting", body: nokeDeviceInfoFactory(noke))
+            sendEvent(withName: "Connecting", body: nokeDeviceInfoFactory(noke))
             break
         case .Connected:
             currentNoke = noke
             NokeDeviceManager.shared().stopScan()
-            sendEvent(withName: "connected", body: nokeDeviceInfoFactory(noke))
+            sendEvent(withName: "Connected", body: nokeDeviceInfoFactory(noke))
             break
         case .Syncing:
-            sendEvent(withName: "syncing", body: nokeDeviceInfoFactory(noke))
+            sendEvent(withName: "Syncing", body: nokeDeviceInfoFactory(noke))
             break
         case .Unlocked:
-            sendEvent(withName: "unlocked", body: nokeDeviceInfoFactory(noke))
+            sendEvent(withName: "Unlocked", body: nokeDeviceInfoFactory(noke))
             break
         case .Disconnected:
             isConnected = false
             NokeDeviceManager.shared().startScanForNokeDevices()
-            sendEvent(withName: "disconnected", body: nokeDeviceInfoFactory(noke))
+            sendEvent(withName: "Disconnected", body: nokeDeviceInfoFactory(noke))
             removeAll()
             break
         }
@@ -49,7 +50,7 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
     func nokeDeviceDidShutdown(noke: NokeDevice, isLocked: Bool, didTimeout: Bool) {
         isConnected = false
         NokeDeviceManager.shared().disconnectNokeDevice(noke)
-        sendEvent(withName: "shutdown", body: [
+        sendEvent(withName: "Shutdown", body: [
             "noke": nokeDeviceInfoFactory(noke),
             "isLocked": isLocked,
             "didTimeout": didTimeout
@@ -58,7 +59,7 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
     
     func nokeErrorDidOccur(error: NokeDeviceManagerError, message: String, noke: NokeDevice?) {
         if error != .nokeAPIErrorAPIKey {
-            sendEvent(withName: "error", body: [
+            sendEvent(withName: "Error", body: [
                 "noke": nokeDeviceInfoFactory(noke),
                 "message": message,
                 "error": error.rawValue
@@ -67,7 +68,7 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
     }
     
     func didUploadData(result: Int, message: String) {
-        sendEvent(withName: "uploaded", body: [
+        sendEvent(withName: "Uploaded", body: [
             "result": result,
             "message": message
             ])
@@ -87,14 +88,27 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
             status = state.rawValue
             break
         }
-        sendEvent(withName: "bluetoothStatusChanged", body: [
+        sendEvent(withName: "BluetoothStatusChanged", body: [
             "status": status
             ])
+    }
+    
+    @objc func isInitialized(
+        _ resolve: RCTPromiseResolveBlock,
+        rejecter reject: RCTPromiseRejectBlock
+    ) {
+        resolve(isInitializedService)
     }
     
     @objc func initService() {
         NokeDeviceManager.shared().delegate = self
         NokeDeviceManager.shared().setLibraryMode(NokeLibraryMode.SANDBOX)
+        isInitializedService = true
+        
+        sendEvent(withName: "ServiceConnected", body: [
+            "connected": true
+            ])
+        
         startScan()
     }
     
@@ -212,18 +226,18 @@ class Noke : RCTEventEmitter, NokeDeviceManagerDelegate {
     
     override func supportedEvents() -> [String]! {
         return [
-            "serviceConnected",
-            "serviceDisconnected",
-            "discovered",
-            "connecting",
-            "connected",
-            "syncing",
-            "unlocked",
-            "shutdown",
-            "disconnected",
-            "bluetoothStatusChanged",
-            "uploaded",
-            "error"
+            "ServiceConnected",
+            "ServiceDisconnected",
+            "Discovered",
+            "Connecting",
+            "Connected",
+            "Syncing",
+            "Unlocked",
+            "Shutdown",
+            "Disconnected",
+            "BluetoothStatusChanged",
+            "Uploaded",
+            "Error"
         ]
     }
 }

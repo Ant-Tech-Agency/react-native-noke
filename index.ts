@@ -33,6 +33,7 @@ type NokeDevice = {
 }
 
 type INoke = {
+  isInitialized(): Promise<boolean>
   initService(): void
   unlock(commands: string[]): Promise<NokeDevice>
   unlockOffline(key: string, command: string): Promise<NokeDevice>
